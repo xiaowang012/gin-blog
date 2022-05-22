@@ -21,6 +21,8 @@ type Parameters struct {
 	Database   string `json:"database"`
 }
 
+var DB *gorm.DB
+
 // InitDB 数据库连接初始化
 func InitDB() *gorm.DB {
 	//读取config.json配置文件
@@ -52,7 +54,12 @@ func InitDB() *gorm.DB {
 		panic("连接数据库失败，错误信息:" + err.Error())
 	}
 	//自动创建表结构
-	db.AutoMigrate(&models.Users{}, &models.UserGroup{}, &models.Permissions{}, &models.Group{}, &models.Comments{}, &models.Articles{}, &models.Userlikes{})
+	db.AutoMigrate(&models.Users{}, &models.UserGroup{}, &models.Permissions{}, &models.Group{}, &models.Comments{}, &models.Articles{}, &models.UserLikes{}, &models.MessageBoard{})
+	DB = db
 	return db
 
+}
+
+func GetDB() *gorm.DB {
+	return DB
 }
