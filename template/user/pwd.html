@@ -1,9 +1,9 @@
-{{ define "user/login.html" }}
+{{ define "user/pwd.html" }}
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8"> 
-	<title>用户登录</title>
+	<title>修改密码</title>
     <link rel="icon" href="../../static/imgs/index/title.png" type="image/x-icon"> 
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
@@ -12,7 +12,7 @@
 <style>
 p{color: red; line-height: 50px;}
 body{
-    background-image: url(../../static/imgs/index/background.png);
+    background-image: url(../../static/imgs/index/pwd.png);
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -23,21 +23,22 @@ body{
             <div class="col-md-4 column">
             </div>
             <div class="col-md-4 column">
-                <div style="text-align: center;" class="page-header">
-                    <h1 >
-                        登录界面 <small></small>
+                <div class="page-header">
+                    <h1>
+                        修改密码 <small></small>
                     </h1>
                 </div>
-                <form role="form" action="/login" method="post">
+                <form role="form" action="/updatePassword" method="post">
                     <div class="form-group">
-                         <label for="username">用户名:</label><input style="background: rgba(255,255,255,0.5);" type="text" class="form-control" name="username" />
+                         <label for="username">用户名:</label><input style="background: rgba(255,255,255,0.5);" type="text"  class="form-control" name="username"  />
                     </div>
                     <div class="form-group">
-                         <label for="password">密码:</label><input style="background: rgba(255,255,255,0.5);" type="password" class="form-control" name="password" />
+                         <label for="password">原密码</label><input style="background: rgba(255,255,255,0.5);" type="password" class="form-control" name="password" />
                     </div>
-                    <div>
-                        <button  type="submit" class="btn btn-default btn-primary">登录</button><a style="line-height: 50px;font-size: larger;margin-left: 40px;" href="/register">没有账号?去注册一个!</a>
-                    </div>
+					<div class="form-group">
+						<label for="password1">新密码:</label><input style="background: rgba(255,255,255,0.5);" type="password" class="form-control" name="password1" />
+				    </div>
+                    <button type="submit" class="btn btn-default btn-primary">确认修改</button><a style="line-height: 50px;font-size: larger;text-align: center;margin-left: 70px;" href="/login">去登录!</a>
                     <p style="font-size: larger" > {{ .message }}</p>
                 </form>
             </div>
@@ -48,5 +49,4 @@ body{
 </body> 
 </html>
 {{ end }}
-
 
