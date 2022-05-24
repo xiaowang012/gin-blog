@@ -1,13 +1,20 @@
 package controller
 
 import (
-	"fmt"
 	"gin-blog/common"
 	"gin-blog/form/user"
 	"gin-blog/models"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
+
+//UserInfo session中的用户信息结构体
+type UserInfo struct {
+	UserName       string
+	ExpirationTime string
+}
 
 //LoginGET 登录页面GET请求
 func LoginGET(ctx *gin.Context) {
@@ -19,7 +26,7 @@ func LoginGET(ctx *gin.Context) {
 
 //LoginPOST 登录页面POST请求
 func LoginPOST(ctx *gin.Context) {
-	fmt.Println("当前访问的URL: " + ctx.FullPath())
+	session := sessions.Default(ctx)
 	db := common.GetDB()
 	var login user.LoginForm
 	//获取登录参数
@@ -66,8 +73,12 @@ func LoginPOST(ctx *gin.Context) {
 		})
 		return
 	}
-
 	//登录成功，重定向到index
+	//设置session,过期时间设置为2小时
+	curTime := time.Now()
+	expirationTime := curTime.Add(time.Hour * 2).Format("2006-01-02 15:04:05")
+	session.Set("currentUser", UserInfo{UserName: username, ExpirationTime: expirationTime})
+	session.Save()
 	ctx.Redirect(http.StatusMovedPermanently, "/index")
 
 }
