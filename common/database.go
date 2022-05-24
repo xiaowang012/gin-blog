@@ -17,7 +17,7 @@ type Parameters struct {
 	Username   string `json:"username"`
 	Password   string `json:"password"`
 	Host       string `json:"host"`
-	Port       string `json:"port"`
+	Port       int    `json:"port"`
 	Database   string `json:"database"`
 }
 
@@ -44,7 +44,7 @@ func InitDB() *gorm.DB {
 	Host := parameters.Host
 	Port := parameters.Port
 	Database := parameters.Database
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", Username, Password, Host, Port, Database)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", Username, Password, Host, Port, Database)
 	//连接数据库mysql
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DriverName: driverName,
