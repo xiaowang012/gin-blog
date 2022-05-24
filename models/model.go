@@ -25,16 +25,17 @@ type Users struct {
 // Articles 博客文章数据库模型
 type Articles struct {
 	gorm.Model
-	ID              int    `gorm:"primaryKey;autoIncrement"`
-	ReleaseDate     string `gorm:"size:100"`
-	Author          string `gorm:"size:100"`
-	BlogTitle       string `gorm:"size:100"`
-	BlogContent     string `gorm:"size:500"`
-	Likes           int
-	comments        int
-	NumberOfViews   int
-	IfAnonymous     bool
-	BlogPicturePath string `gorm:"size:200"`
+	ID                  int    `gorm:"primaryKey;autoIncrement"`
+	ReleaseDate         string `gorm:"size:100"`
+	Author              string `gorm:"size:100"`
+	BlogTitle           string `gorm:"size:100"`
+	BlogContentOverview string `gorm:"size:100"`
+	BlogContent         string `gorm:"size:500"`
+	Likes               int
+	comments            int
+	NumberOfViews       int
+	IfAnonymous         bool
+	BlogPicturePath     string `gorm:"size:200"`
 }
 
 // Comments 用户评论文章数据库模型
