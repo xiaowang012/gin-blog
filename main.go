@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"net/http"
 )
 
@@ -25,6 +26,12 @@ func main() {
 	}
 	//定义默认的gin路由器
 	router := gin.Default()
+	router.SetFuncMap(template.FuncMap{
+		"add": func(x, y int) int {
+			return x + y
+		},
+	})
+
 	//定义session存储引擎redis
 	store := cookie.NewStore([]byte("secretxaas121312xdff"))
 	router.Use(sessions.Sessions("sessionID", store))
