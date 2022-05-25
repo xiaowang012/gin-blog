@@ -29,8 +29,15 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/updatePassword", controller.ChangePasswordGET)
 	r.POST("/updatePassword", controller.ChangePasswordPOST)
 
-	//Blog首页
+	//Blog首页,首页展示，翻页，留言板
 	r.GET("/index", controller.IndexGET)
+	r.GET("/index/nextPage", controller.IndexGETNextPage)
+	r.POST("/index/SendMessageBoard", controller.IndexMessageBoard)
+
+	//用户个人信息页面
+	r.GET("/index/userinfo", controller.UserInfoPage)
+	//修改个人信息
+	r.POST("/index/userinfo/update", controller.UserInfoUpdate)
 	//搜索文章
 	r.POST("/searchArticles", controller.SearchArticles)
 	return r
