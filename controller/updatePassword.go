@@ -4,14 +4,25 @@ import (
 	"gin-blog/common"
 	"gin-blog/form/user"
 	"gin-blog/models"
+	"github.com/gin-contrib/sessions"
 
 	"github.com/gin-gonic/gin"
 )
 
 //ChangePasswordGET 修改密码GET请求
 func ChangePasswordGET(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	userinfo := session.Get("currentUser")
+	var currentUser string
+	if userinfo == nil {
+		currentUser = ""
+	} else {
+		userInfoStruct := userinfo.(UserInfo)
+		currentUser = userInfoStruct.UserName
+	}
 	ctx.HTML(200, "user/pwd.html", gin.H{
-		"message": "welcome!",
+		"currentUser": currentUser,
+		"message":     "welcome!",
 	})
 
 }
