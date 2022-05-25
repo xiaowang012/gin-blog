@@ -103,8 +103,8 @@
                             </div>
                         {{ end }}
                         <!-- 分页 -->
-                        <a style="float:right; font-size: small;" role="button" class="btn btn-default" href="/index" >返回首页</a>
-                        <a style="float: right; font-size: small;margin-right: 10px;" role="button" class="btn btn-info" href="nextPage" >查看更多</a>
+                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/index" >返回首页</a>
+                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage 1 }}" >查看更多</a>
                     </div>
                     <div class="col-md-4 column">
                         <h2>
@@ -157,7 +157,7 @@
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/userinfo">个人中心</a>
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/management">管理入口</a>
                             <img src="../../static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
-                            <a style="margin-left: 10px;color: black;font-size: larger;" href="/userInfo">{{ .currentUser }}</a> 
+                            <a style="margin-left: 10px;color: black;font-size: larger;" href="/index/userinfo">{{ .currentUser }}</a> 
                             <a style="margin-left: 30px; color: black;font-size: larger;" href="/logout">退出登录</a>
                         </p>
                     </div>   
@@ -187,14 +187,14 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <form role="form" action="/index_send_message/" method="post">
+                    <form role="form" action="/index/SendMessageBoard" method="post">
                        
                         <div class="form-group">
-                             <label for="commenting_user">用户名:</label><input  type="text" value="{{ .currentUser }}" class="form-control" name="commenting_user" readonly="readonly" />
+                             <label for="username">用户名:</label><input  type="text" value="{{ .currentUser }}" class="form-control" name="username" readonly="readonly" />
                         </div>
                         <div class="form-group">
-                            <label for="message_content">留言信息</label>
-                            <textarea class="form-control" rows="3" name="message_content"  ></textarea>
+                            <label for="content">留言信息</label>
+                            <textarea class="form-control" rows="3" name="content"  ></textarea>
                         </div>
                         <div class="checkbox">
                             <label><input name="anonymous" type="checkbox" />是否匿名</label>
