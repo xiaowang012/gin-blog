@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 // Users 用户注册数据库模型
@@ -86,5 +85,4 @@ type MessageBoard struct {
 	PostUser    string `gorm:"size:100"`
 	Content     string `gorm:"size:200"`
 	IfAnonymous bool
-	SendTime    time.Time
 }
