@@ -94,7 +94,7 @@ func IndexGET(ctx *gin.Context) {
 	}
 
 	//返回数据到HTML
-	ctx.HTML(200, "user/index.html", gin.H{
+	ctx.HTML(200, "index/index.html", gin.H{
 		"currentUser": userinfoNew.UserName,
 		"msg":         userinfoNew.UserName + " ,欢迎来到Blog!",
 		"style":       "alert alert-success alert-dismissable",
@@ -160,7 +160,7 @@ func IndexGETNextPage(ctx *gin.Context) {
 		messagesNew = append(messagesNew, val)
 	}
 	//返回数据到HTML
-	ctx.HTML(200, "user/index.html", gin.H{
+	ctx.HTML(200, "index/index.html", gin.H{
 		"currentUser": userinfoNew.UserName,
 		"msg":         userinfoNew.UserName + " ,欢迎来到Blog!",
 		"style":       "alert alert-success alert-dismissable",
@@ -205,5 +205,28 @@ func IndexMessageBoard(ctx *gin.Context) {
 	//写入数据库
 	MessageInfo := models.MessageBoard{PostUser: username, Content: content, IfAnonymous: Value}
 	db.Create(&MessageInfo)
+	ctx.Redirect(http.StatusMovedPermanently, "/index")
+}
+
+// IndexMessageDelete 首页留言板删除留言信息
+func IndexMessageDelete(ctx *gin.Context) {
+	db := common.GetDB()
+	//获取get请求参数，ID
+	messageId := ctx.Query("id")
+	//将id 由string转为int
+	messageIdInt, err := strconv.Atoi(messageId)
+	if err != nil {
+		fmt.Println("转换ID数据类型错误: " + err.Error())
+		return
+	}
+	//查询留言信息
+	var MessageInfo models.MessageBoard
+	db.First(&MessageInfo, messageIdInt)
+	if MessageInfo.ID == 0 {
+		fmt.Println("未查询到留言信息,无法删除!")
+		return
+	}
+	//执行删除操作
+	db.Delete(&MessageInfo, MessageInfo.ID)
 	ctx.Redirect(http.StatusMovedPermanently, "/index")
 }
