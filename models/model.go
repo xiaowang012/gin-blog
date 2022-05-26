@@ -29,7 +29,7 @@ type Articles struct {
 	Author              string `gorm:"size:100"`
 	BlogTitle           string `gorm:"size:100"`
 	BlogContentOverview string `gorm:"size:100"`
-	BlogContent         string `gorm:"size:500"`
+	BlogContent         string `gorm:"size:10000"`
 	Likes               int
 	comments            int
 	NumberOfViews       int
