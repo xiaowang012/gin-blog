@@ -24,17 +24,18 @@ type Parameters struct {
 var DB *gorm.DB
 
 // InitDB 数据库连接初始化
-func InitDB() *gorm.DB {
+func InitDB() {
 	//读取config.json配置文件
 	jsonFile, err := os.Open("./common/config.json")
 	if err != nil {
-		fmt.Println("open config.json failed!")
-		fmt.Println(err.Error())
+		fmt.Println("打开config.json文件错误: " + err.Error())
+		return
 	}
 	defer jsonFile.Close()
 	jsonData, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		fmt.Println("error reading json file")
+		fmt.Println("读取配置文件config.json错误: " + err.Error())
+		return
 	}
 	var parameters Parameters
 	json.Unmarshal(jsonData, &parameters)
@@ -51,12 +52,12 @@ func InitDB() *gorm.DB {
 		DSN:        dsn,
 	}), &gorm.Config{})
 	if err != nil {
-		panic("连接数据库失败，错误信息:" + err.Error())
+		fmt.Println("mysql连接错误: " + err.Error())
+		return
 	}
 	//自动创建表结构
 	db.AutoMigrate(&models.Users{}, &models.UserGroup{}, &models.Permissions{}, &models.Group{}, &models.Comments{}, &models.Articles{}, &models.UserLikes{}, &models.MessageBoard{})
 	DB = db
-	return db
 
 }
 
