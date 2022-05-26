@@ -33,6 +33,7 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/index", controller.IndexGET)
 	r.GET("/index/nextPage", controller.IndexGETNextPage)
 	r.POST("/index/SendMessageBoard", controller.IndexMessageBoard)
+	r.GET("/index/delete/messages", controller.IndexMessageDelete)
 
 	//用户个人信息页面
 	r.GET("/index/userinfo", controller.UserInfoPage)
@@ -40,5 +41,10 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.POST("/index/userinfo/update", controller.UserInfoUpdate)
 	//搜索文章
 	r.POST("/searchArticles", controller.SearchArticles)
+
+	//文章处理
+	r.GET("/article/details", controller.ArticleDetails)
+	r.GET("/WriteArticle", controller.WriteArticle)
+	r.POST("/article/WriteArticle/picture/upload", controller.ReceivePicture)
 	return r
 }
