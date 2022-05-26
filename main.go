@@ -21,7 +21,7 @@ func main() {
 	//初始化redis
 	err := common.InitRedis()
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("redis连接错误: " + err.Error())
 		return
 	}
 	//定义默认的gin路由器
