@@ -7,11 +7,12 @@ import (
 	"gin-blog/common"
 	"gin-blog/form/index"
 	"gin-blog/models"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 //IndexGET 首页
@@ -81,7 +82,7 @@ func IndexGET(ctx *gin.Context) {
 	} else {
 		err = json.Unmarshal(val1, &messages)
 		if err != nil {
-			fmt.Println("解析messages错误：" + err.Error())
+			fmt.Println("解析messages错误:" + err.Error())
 		}
 	}
 	//根据messages切片中的IfAnonymous 字段是否为true,然后复制到新切片
@@ -190,7 +191,7 @@ func IndexMessageBoard(ctx *gin.Context) {
 		fmt.Println("用户名长度范围为:5-20!")
 		return
 	}
-	if len(content) > 200 {
+	if len(content) > 600 {
 		fmt.Println("留言信息长度最大为:200!")
 		return
 	}
