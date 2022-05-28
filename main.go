@@ -27,8 +27,13 @@ func main() {
 	//定义默认的gin路由器
 	router := gin.Default()
 	router.SetFuncMap(template.FuncMap{
+		//模板中的两个变量相加，实现分页
 		"add": func(x, y int) int {
 			return x + y
+		},
+		//将返回到前端的字符串转换为html代码，如数据库字段为 <p>xx</p>,转换为前端的p标签
+		"tran": func(code string) template.HTML {
+			return template.HTML(code)
 		},
 	})
 
@@ -37,6 +42,7 @@ func main() {
 	router.Use(sessions.Sessions("sessionID", store))
 	router = route.Route(router)
 	//加载模板文件
+
 	router.LoadHTMLGlob("template/**/*")
 	router.StaticFS("/static", http.Dir("./static"))
 	//run
