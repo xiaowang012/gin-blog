@@ -85,24 +85,28 @@ func UserInfoUpdate(ctx *gin.Context) {
 	Age := updateUserInfo.Age
 	Phone := updateUserInfo.Phone
 	//获取头像文件
+	var filePath string
 	file, err := ctx.FormFile("picture")
 	if err != nil {
 		fmt.Println("接收文件错误:" + err.Error())
-		return
+	} else {
+		//保存到指定文件
+		fileName := strconv.FormatInt(time.Now().UnixNano(), 10) + ".png"
+		curDir, err := os.Getwd()
+		if err != nil {
+			fmt.Println("获取当前工作目录失败: " + err.Error())
+			return
+		}
+
+		filePath = "/static/imgs/user/" + fileName
+		err = ctx.SaveUploadedFile(file, curDir+filePath)
+		if err != nil {
+			fmt.Println("保存头像文件错误：" + err.Error())
+			return
+		}
+
 	}
-	//保存到指定文件
-	fileName := strconv.FormatInt(time.Now().UnixNano(), 10) + ".png"
-	curDir, err := os.Getwd()
-	if err != nil {
-		fmt.Println("获取当前工作目录失败: " + err.Error())
-		return
-	}
-	filePath := "/static/imgs/user/" + fileName
-	err = ctx.SaveUploadedFile(file, curDir+filePath)
-	if err != nil {
-		fmt.Println("保存头像文件错误：" + err.Error())
-		return
-	}
+
 	//判断数据长度
 	if len(Username) > 100 {
 		fmt.Println("Username 长度最大为100!")
@@ -133,7 +137,12 @@ func UserInfoUpdate(ctx *gin.Context) {
 		return
 	}
 	//写入数据库
-	db.Model(&user).Updates(models.Users{Nickname: Nickname, Email: Email, PicturePath: filePath,
-		Birthday: Birthday, Age: Age, Phone: Phone})
+	if filePath == "" {
+		db.Model(&user).Updates(models.Users{Nickname: Nickname, Email: Email,
+			Birthday: Birthday, Age: Age, Phone: Phone})
+	} else {
+		db.Model(&user).Updates(models.Users{Nickname: Nickname, Email: Email, PicturePath: filePath,
+			Birthday: Birthday, Age: Age, Phone: Phone})
+	}
 	ctx.Redirect(http.StatusMovedPermanently, "/index/userinfo")
 }
