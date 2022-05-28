@@ -2,6 +2,7 @@ package route
 
 import (
 	"gin-blog/controller"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +45,8 @@ func Route(r *gin.Engine) *gin.Engine {
 
 	//文章处理
 	r.GET("/article/details", controller.ArticleDetails)
-	r.GET("/WriteArticle", controller.WriteArticle)
+	r.GET("/article/WriteArticle", controller.WriteArticlePage)
+	r.POST("/article/WriteArticle", controller.WriteArticle)
 	r.POST("/article/WriteArticle/picture/upload", controller.ReceivePicture)
 	return r
 }
