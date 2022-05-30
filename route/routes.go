@@ -3,7 +3,6 @@ package route
 import (
 	"gin-blog/controller"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,14 +17,8 @@ func Route(r *gin.Engine) *gin.Engine {
 	//登录
 	r.GET("/login", controller.LoginGET)
 	r.POST("/login", controller.LoginPOST)
-	//退出登录 只能用HandleContext方式重定向所以卸载routes中
-	r.GET("/logout", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		session.Delete("currentUser")
-		session.Save()
-		ctx.Request.URL.Path = "/login"
-		r.HandleContext(ctx)
-	})
+	//退出登录 只能用临时重定向
+	r.GET("/logout", controller.Logout)
 	//修改密码
 	r.GET("/updatePassword", controller.ChangePasswordGET)
 	r.POST("/updatePassword", controller.ChangePasswordPOST)
@@ -42,11 +35,19 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.POST("/index/userinfo/update", controller.UserInfoUpdate)
 	//搜索文章
 	r.POST("/searchArticles", controller.SearchArticles)
+	//搜索文章分页
+	r.GET("/searchArticles/page", controller.SearchArticlesPage)
 
 	//文章处理
 	r.GET("/article/details", controller.ArticleDetails)
 	r.GET("/article/WriteArticle", controller.WriteArticlePage)
 	r.POST("/article/WriteArticle", controller.WriteArticle)
 	r.POST("/article/WriteArticle/picture/upload", controller.ReceivePicture)
+	r.POST("/article/AddComments", controller.CommentingArticles)
+	r.GET("/article/addLikes", controller.ArticleAddLikes)
+
+	//文章列表页面相关路由
+	r.GET("/article/list", controller.ArticleList)
+
 	return r
 }
