@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"gin-blog/common"
 	"gin-blog/form/article"
@@ -220,24 +222,32 @@ func WriteArticlePage(ctx *gin.Context) {
 	db := common.GetDB()
 	session := sessions.Default(ctx)
 	currentUser := session.Get("currentUser").(UserInfo)
-	//获取redis中的编辑数据
-	//rdb := common.GetRedis()
-	//var tagsInfo []string
-	//val, err := rdb.Get(context.Background(), "tags").Bytes()
-	//err = json.Unmarshal(val, &tagsInfo)
-	//if err != nil {
-	//	fmt.Println("解析tagsInfo错误：" + err.Error())
-	//	//从数据库中获取tags
-	//	var tags []models.ArticleTags
-	//	db.Find(&tags)
-	//	for _, v := range tags {
-	//		tagsInfo = append(tagsInfo, v.Tag)
-	//	}
-	//}
 	//从数据库中获取tags
-	var tagsInfo []string
 	var tags []models.ArticleTags
-	db.Find(&tags)
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "tags").Bytes()
+	if err != nil {
+		fmt.Println("获取tagsInfo失败：" + err.Error())
+		//从数据库中获取tags
+		fmt.Println("从数据库中获取tags-------------")
+		db.Find(&tags)
+		byteData, err := json.Marshal(tags)
+		if err != nil {
+			fmt.Println("tags 转换数据错误: " + err.Error())
+		}
+		err = rdb.Set(context.Background(), "tags", byteData, time.Hour*2).Err()
+		if err != nil {
+			println("SET tags错误!:" + err.Error())
+		}
+	} else {
+		err = json.Unmarshal(val, &tags)
+		if err != nil {
+			fmt.Println("解析tags失败-----")
+			return
+		}
+
+	}
+	var tagsInfo []string
 	for _, v := range tags {
 		tagsInfo = append(tagsInfo, v.Tag)
 	}
@@ -262,13 +272,52 @@ func WriteArticle(ctx *gin.Context) {
 	db := common.GetDB()
 	session := sessions.Default(ctx)
 	currentUser := session.Get("currentUser").(UserInfo)
+	//从数据库或者redis中获取tags
+	//渲染tags 标签
+	var tags []models.ArticleTags
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "tags").Bytes()
+	if err != nil {
+		fmt.Println("获取tagsInfo失败：" + err.Error())
+		//从数据库中获取tags
+		fmt.Println("从数据库中获取tags-------------")
+		db.Find(&tags)
+		byteData, err := json.Marshal(tags)
+		if err != nil {
+			fmt.Println("tags 转换数据错误: " + err.Error())
+		}
+		err = rdb.Set(context.Background(), "tags", byteData, time.Hour*2).Err()
+		if err != nil {
+			println("SET tags错误!:" + err.Error())
+		}
+	} else {
+		err = json.Unmarshal(val, &tags)
+		if err != nil {
+			fmt.Println("解析tags失败-----")
+			return
+		}
+
+	}
+	var tagsInfo []string
+	for _, v := range tags {
+		tagsInfo = append(tagsInfo, v.Tag)
+	}
+	//拼接html
+	var option string
+	var optionHtml []string
+	for _, v := range tagsInfo {
+		option = fmt.Sprintf("<option value=\"%s\">%s</option>", v, v)
+		optionHtml = append(optionHtml, option)
+	}
 	var articleInfo article.WriteArticleForm
 	//获取POST请求中的文章数据
-	err := ctx.ShouldBind(&articleInfo)
+	err = ctx.ShouldBind(&articleInfo)
 	if err != nil {
 		ctx.HTML(422, "article/write.html", gin.H{
-			"msg":   "错误! " + err.Error(),
-			"style": "alert alert-dismissible alert-danger",
+			"msg":     "错误! " + err.Error(),
+			"style":   "alert alert-dismissible alert-danger",
+			"Author":  currentUser.UserName,
+			"options": optionHtml,
 		})
 		return
 	}
@@ -283,48 +332,41 @@ func WriteArticle(ctx *gin.Context) {
 	//判断数据长度是否符合要求
 	if len(Author) > 300 {
 		ctx.HTML(422, "article/write.html", gin.H{
-			"msg":   "错误! 用户名长度范围最大为:100!",
-			"style": "alert alert-dismissible alert-danger",
+			"msg":     "错误! 用户名长度范围最大为:100!",
+			"style":   "alert alert-dismissible alert-danger",
+			"Author":  currentUser.UserName,
+			"options": optionHtml,
 		})
 		return
 	}
 	if len(Title) > 300 {
 		ctx.HTML(422, "article/write.html", gin.H{
-			"msg":   "错误! 标题长度范围最大为:100!",
-			"style": "alert alert-dismissible alert-danger",
+			"msg":     "错误! 标题长度范围最大为:100!",
+			"style":   "alert alert-dismissible alert-danger",
+			"Author":  currentUser.UserName,
+			"options": optionHtml,
 		})
 		return
 	}
 	if len(Overview) > 300 {
 		ctx.HTML(422, "article/write.html", gin.H{
-			"msg":   "错误! 文章概述长度范围最大为:100!",
-			"style": "alert alert-dismissible alert-danger",
+			"msg":     "错误! 文章概述长度范围最大为:100!",
+			"style":   "alert alert-dismissible alert-danger",
+			"Author":  currentUser.UserName,
+			"options": optionHtml,
 		})
 		return
 	}
 	if len(Content) > 16383 {
 		ctx.HTML(422, "article/write.html", gin.H{
-			"msg":   "错误! 内容长度范围最大为:16383!",
-			"style": "alert alert-dismissible alert-danger",
+			"msg":     "错误! 内容长度范围最大为:16383!",
+			"style":   "alert alert-dismissible alert-danger",
+			"Author":  currentUser.UserName,
+			"options": optionHtml,
 		})
 		return
 	}
-	////存进redis 过期时间设置为2小时
-	//rdb := common.GetRedis()
-	////定义文章编辑数据结构体的值
-	//var articlesData ArticlesInfoStruct
-	//articlesData.Title = Title
-	//articlesData.Overview = Overview
-	//articlesData.Content = Content
-	////将articlesData 转换为byte
-	//byteData, err := json.Marshal(articlesData)
-	//if err != nil {
-	//	fmt.Println("articlesData转换数据错误: " + err.Error())
-	//}
-	//err = rdb.Set(context.Background(), currentUser.UserName, byteData, time.Hour*2).Err()
-	//if err != nil {
-	//	println("SET articlesData错误!:" + err.Error())
-	//}
+
 	//判断作者是否为currentUser一致
 	if currentUser.UserName != Author {
 		ctx.HTML(422, "article/write.html", gin.H{
@@ -334,6 +376,7 @@ func WriteArticle(ctx *gin.Context) {
 			"title":    Title,
 			"Overview": Overview,
 			"Content":  Content,
+			"options":  optionHtml,
 		})
 		return
 
@@ -359,11 +402,13 @@ func WriteArticle(ctx *gin.Context) {
 		IfAnonymous:         AnonymousBool,
 		Tag:                 Tag}
 	db.Create(&AddArticleInfo)
+
 	//返回HTML信息
 	ctx.HTML(200, "article/write.html", gin.H{
-		"msg":    "success:发布成功!可以到主页查看或者搜索查看文章!",
-		"style":  "alert alert-success alert-dismissable",
-		"Author": currentUser.UserName,
+		"msg":     "success:发布成功!可以到主页查看或者搜索查看文章!",
+		"style":   "alert alert-success alert-dismissable",
+		"Author":  currentUser.UserName,
+		"options": optionHtml,
 	})
 }
 
