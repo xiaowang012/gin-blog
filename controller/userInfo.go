@@ -20,13 +20,13 @@ func UserInfoPage(ctx *gin.Context) {
 	//获取当前登录用户
 	userinfo := session.Get("currentUser")
 	if userinfo == nil {
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	userinfoNew := userinfo.(UserInfo)
 	//判断UserInfo数据是否为空
 	if userinfoNew.UserName == "" || userinfoNew.ExpirationTime == "" {
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	//判断session id中的时间是否过期
@@ -39,7 +39,7 @@ func UserInfoPage(ctx *gin.Context) {
 		//session失效，清空session，UserInfo 重定向到login页面
 		session.Delete("currentUser")
 		session.Save()
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 
@@ -48,7 +48,7 @@ func UserInfoPage(ctx *gin.Context) {
 	db.Where("username = ?", userinfoNew.UserName).First(&user)
 	if user.ID == 0 {
 		//用户不存在
-		ctx.Redirect(http.StatusMovedPermanently, "/index")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/index")
 		return
 	}
 	//fmt.Println(user.PicturePath)
@@ -144,5 +144,5 @@ func UserInfoUpdate(ctx *gin.Context) {
 		db.Model(&user).Updates(models.Users{Nickname: Nickname, Email: Email, PicturePath: filePath,
 			Birthday: Birthday, Age: Age, Phone: Phone})
 	}
-	ctx.Redirect(http.StatusMovedPermanently, "/index/userinfo")
+	ctx.Redirect(http.StatusTemporaryRedirect, "/index/userinfo")
 }
