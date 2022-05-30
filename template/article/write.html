@@ -85,6 +85,15 @@
                                 <label for="BlogContentOverview"></label><input  type="text" placeholder="输入文章概述" style="background: rgba(255,255,255,0.5);"  class="form-control" name="BlogContentOverview" value="{{ .Overview }}" />
                             </div>
                             <div class="form-group">
+                                <label for="tag">标签</label>
+                                <select name="tag" class="form-control">
+                                    <option value="">请选择类别</option>
+                                    {{ range $op := .options   }}
+                                        {{ $op | tran }} 
+                                    {{ end }}
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <textarea class="summernote" id="summernote" name="summernote">{{ .Content }}</textarea>
                             </div>
                             <div class="checkbox">

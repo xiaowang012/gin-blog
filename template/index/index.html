@@ -37,14 +37,14 @@
                         </form>
                     </div>
                     <div class="col-md-4 column"> 
-                        <a  style="margin-top: 85px;" href="/article/WriteArticle" role="button" class="btn btn-info">发个文章</a>
+                        <a  style="margin-top: 85px;" href="/article/WriteArticle" role="button" class="btn btn-info">写Blog</a>
                     </div>
 
                 </div>
                 <!-- 消息提醒 -->
                 <div style="margin-top: 10px;" class= "{{ .style }}">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-                        <strong>{{ .msg }}&nbsp&nbsp</strong>   
+                        <strong>{{ .msg }}</strong>   
                 </div>
 
                 <div class="row clearfix">
@@ -97,8 +97,8 @@
                                     </p>
                                     <p>
                                         <a class="btn btn-default" href="/article/details?id={{ .ID }}">查看详情</a>
-                                        <a class="btn btn-success"  href="#">点赞</a>
-                                        <a class="btn btn-info" href="#">评论</a>
+                                        <a class="btn btn-success"  href="/article/addLikes?id={{ .ID }}&url=/index">点赞</a>
+                                        <!-- <a class="btn btn-info" href="#">评论</a> -->
                                         <!-- <span class="label label-default "  style="float: right;margin-top: 10px;text-align: justify;background-color:darkgrey;" >发布时间:{{ .ReleaseDate }}<br>作者:{{ .Author }}<br>浏览量:{{ .NumberOfViews }}</span> -->
                                     </p>
                                 </div>
@@ -106,17 +106,25 @@
                         {{ end }}
                         <!-- 分页 -->
                         <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/index" >返回首页</a>
-                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage 1 }}" >查看更多</a>
+                        {{ $page := add .currentPage -1 }}
+                        {{if lt $page 1}}
+                            <a style="margin-left: 520px; font-size: small;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber=1" >上一页</a>
+                        {{ else }}
+                            <a style="margin-left: 520px; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage -1 }}" >上一页</a>
+                        {{end}}
+                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage 1 }}" >下一页</a>
                     </div>
                     <div class="col-md-4 column">
                         <h2>
                             关于我们.
                         </h2>
                         <p>
-                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspGin-Blog采用gin,gorm,bootstrap3,mysql实现,
-                            主要用于记录在学习过程中的一些问题记录,比如python,Golang的学习过程中的各种坑,
-                            记录下来,以便以后避坑
-                            有任何问题,可以联系邮箱:
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbspGin-Blog采用gin,gorm,bootstrap3,mysql
+                            实现的一个个人博客网站,
+                            所有数据均来自网络或者注册用户发布的文章,
+                            使用python自动爬取,所有的爬取网络上的文章
+                            均会标明原作者以及原文链接。
+                            有任何问题,可以联系本人删除文章:
                             1300202481@qq.com或在下方留言.
                         </p>
                         <p>
@@ -153,8 +161,7 @@
                 <nav style="height: 20px;" class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div style="margin-left: 270px;margin-top: 15px;" class="navbar-header">
                         <p> <a style="margin-left: 10px;color: black;font-size: larger;" href="/index">Blog首页</a>
-                            <a style="margin-left: 10px;color: black;font-size: larger;" href="">文章列表</a>
-                            <a style="margin-left: 10px;color: black;font-size: larger;" href="">标签分类</a>
+                            <a style="margin-left: 10px;color: black;font-size: larger;" href="/article/list?tag=Python">文章列表</a>
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/my">我的文章</a> 
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/userinfo">个人中心</a>
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/management">管理入口</a>

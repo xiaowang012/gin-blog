@@ -1,0 +1,160 @@
+{{ define "articleList/list.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<title>Blog-文章分类</title>
+    <link rel="icon" href="../../static/imgs/index/title.png" type="image/x-icon"> 
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        function delete_confirm(url)
+        {
+        var r=confirm("您确定要删除吗?")
+          if(r){window.location.href=url
+          }
+        }
+    </script>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="row clearfix">
+                    <div class="col-md-2 column">
+                        <img style="margin-top: 70px;" alt="" height="60px" width="" src="../../static/imgs/index/title1.png" />
+                    </div>
+                    <div class="col-md-6 column">
+                        <form role="form" action="/searchArticles" method="post" class="form-inline">
+                            <div class="form-group">
+
+                                <label style="margin-top: 100px;" for="articleName"></label><input  placeholder="搜索文章!"  style="width: 400px;" type="text" class="form-control" id="articleName" name="articleName" />
+                                <button type="submit" style="width: 60px;margin-left: 20px;" class="btn btn-primary">搜索</button>
+                                <a role="button" style="width: 60px;" href="/index" class="btn btn-default">重置</a>
+                                
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4 column"> 
+                        <a  style="margin-top: 85px;" href="/article/WriteArticle" role="button" class="btn btn-info">发个文章</a>
+                    </div>
+                </div>
+              
+                <div class="col-md-8 column">
+                    <!-- 消息提醒 -->
+                    <div style="margin-top: 10px;" class= "{{ .style }}">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                            <strong>{{ .msg }}</strong>   
+                    </div>
+                    <div class="col-md-12 column">
+                        <div style="margin-top: 20px;">
+                            {{ range $v := .tagsHtml }}
+                                {{ $v | tran }}  
+                            {{ end }}
+                        </div>
+                    </div> 
+                    <div style="margin-top: 20px;" class="col-md-12" >
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    文章列表 &nbsp&nbsp{{ .articleNum }}篇
+                                </h3>
+                            </div>
+                        </div>
+                        <!-- 文章列表 -->
+                        {{ range .articles }}
+                            <div style="margin-top: 10px;background-image: url('../../static/imgs/index/article_background.png');" class="thumbnail">
+                                <div class="caption">
+                                    <h3>
+                                        {{ .BlogTitle }}
+                                    </h3>
+                                    <p>
+                                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ .BlogContentOverview }}......
+                                    </p>
+                                    <p>
+                                        <a class="btn btn-default" href="/article/details?id={{ .ID }}">查看详情</a>
+                                        <a class="btn btn-success"  href="/article/addLikes?id={{ .ID }}&url=/article/list?tag=Python">点赞</a>
+                                        <!-- <a class="btn btn-info" href="#">评论</a> -->
+                                        <!-- <span class="label label-default "  style="float: right;margin-top: 10px;text-align: justify;background-color:darkgrey;" >发布时间:{{ .ReleaseDate }}<br>作者:{{ .Author }}<br>浏览量:{{ .NumberOfViews }}</span> -->
+                                    </p>
+                                </div>
+                            </div>
+                        {{ end }}
+                    </div>
+                    <div class="col-md-12" >
+                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/index" >返回首页</a>
+                        {{ $page := add .currentPage -1 }}
+                        {{if lt $page 1}}
+                            <a style="margin-left: 470px; font-size: small;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber=1" >上一页</a>
+                        {{ else }}
+                            <a style="margin-left: 470px; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage -1 }}" >上一页</a>
+                        {{end}}
+                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/index/nextPage?pageNumber={{add .currentPage 1 }}" >下一页</a>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-md-12 column">
+                            <dl style="margin-top:20px;" >
+                                <div>
+                                    <dt>
+                                        项目地址:<a href="https://github.com/xiaowang012/gin-blog.git" >点击进入</a>&nbsp邮箱: 1300202481@qq.com
+                                    </dt>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-md-4 column">
+                    <div style="margin-top: 20px;" class="tabbable" id="tabs-706125">
+                        <ul class="nav nav-tabs">
+                            <li>
+                                <a style="font-size: small;" href="#panel-543424" data-toggle="tab">高赞文章</a>
+                            </li>
+                            <li class="active">
+                                <a href="#panel-508098" data-toggle="tab">热评文章</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane" id="panel-543424">
+                                <p>
+                                    热评文章test
+                                </p>
+                            </div>
+                            <div class="tab-pane active" id="panel-508098">
+                                <p>
+                                    高赞文章test
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+
+                <div class="row clearfix">
+                    <div class="col-md-8 column">
+                    </div>
+                    <div class="col-md-4 column">    
+                    </div>
+                </div>
+                <nav style="height: 20px;" class="navbar navbar-default navbar-fixed-top" role="navigation">
+                    <div style="margin-left: 270px;margin-top: 15px;" class="navbar-header">
+                        <p> <a style="margin-left: 10px;color: black;font-size: larger;" href="/index">Blog首页</a>
+                            <a style="margin-left: 10px;color: black;font-size: larger;" href="/article/list?tag=Python">文章列表</a>
+                            <a style="margin-left: 15px;color: black;font-size: larger;" href="/my">我的文章</a> 
+                            <a style="margin-left: 15px;color: black;font-size: larger;" href="/userinfo">个人中心</a>
+                            <a style="margin-left: 15px;color: black;font-size: larger;" href="/management">管理入口</a>
+                            <img src="../../static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
+                            <a style="margin-left: 10px;color: black;font-size: larger;" href="/index/userinfo">{{ .currentUser }}</a> 
+                            <a style="margin-left: 30px; color: black;font-size: larger;" href="/logout">退出登录</a>
+                        </p>
+                    </div>   
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
+{{ end }}
+
+
