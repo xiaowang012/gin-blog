@@ -36,16 +36,13 @@ func main() {
 			return template.HTML(code)
 		},
 	})
-
 	//定义session存储引擎redis
-	store := cookie.NewStore([]byte("secretxaas121312xdff"))
+	store := cookie.NewStore([]byte("13324@@3434341312admin"))
 	router.Use(sessions.Sessions("sessionID", store))
 	router = route.Route(router)
 	//加载模板文件
-
 	router.LoadHTMLGlob("template/**/*")
 	router.StaticFS("/static", http.Dir("./static"))
 	//run
 	router.Run("0.0.0.0:5001")
-
 }
