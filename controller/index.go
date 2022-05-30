@@ -24,13 +24,13 @@ func IndexGET(ctx *gin.Context) {
 	//获取当前登录用户
 	userinfo := session.Get("currentUser")
 	if userinfo == nil {
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	userinfoNew := userinfo.(UserInfo)
 	//判断UserInfo数据是否为空
 	if userinfoNew.UserName == "" || userinfoNew.ExpirationTime == "" {
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	//判断session id中的时间是否过期
@@ -43,7 +43,7 @@ func IndexGET(ctx *gin.Context) {
 		//session失效，清空session，UserInfo 重定向到login页面
 		session.Delete("currentUser")
 		session.Save()
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	//定义接收mysql article，messages数据的slice
@@ -134,7 +134,7 @@ func IndexGETNextPage(ctx *gin.Context) {
 		//session失效，清空session，UserInfo 重定向到login页面
 		session.Delete("currentUser")
 		session.Save()
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		ctx.Redirect(http.StatusTemporaryRedirect, "/login")
 		return
 	}
 	//获取页码参数
@@ -204,9 +204,12 @@ func IndexMessageBoard(ctx *gin.Context) {
 		Value = false
 	}
 	//写入数据库
-	MessageInfo := models.MessageBoard{PostUser: username, Content: content, IfAnonymous: Value}
+	MessageInfo := models.MessageBoard{
+		PostUser:    username,
+		Content:     content,
+		IfAnonymous: Value}
 	db.Create(&MessageInfo)
-	ctx.Redirect(http.StatusMovedPermanently, "/index")
+	ctx.Redirect(http.StatusTemporaryRedirect, "/index")
 }
 
 // IndexMessageDelete 首页留言板删除留言信息
@@ -229,5 +232,5 @@ func IndexMessageDelete(ctx *gin.Context) {
 	}
 	//执行删除操作
 	db.Delete(&MessageInfo, MessageInfo.ID)
-	ctx.Redirect(http.StatusMovedPermanently, "/index")
+	ctx.Redirect(http.StatusTemporaryRedirect, "/index")
 }
