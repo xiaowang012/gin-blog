@@ -29,12 +29,13 @@ type Articles struct {
 	Author              string `gorm:"size:300"`
 	BlogTitle           string `gorm:"size:300"`
 	BlogContentOverview string `gorm:"size:300"`
-	BlogContent         string `gorm:"size:30000"`
+	BlogContent         string `gorm:"text"`
 	Likes               int
 	Comments            int
 	NumberOfViews       int
 	IfAnonymous         bool
 	BlogPicturePath     string `gorm:"size:600"`
+	Tag                 string `gorm:"size:100"`
 }
 
 // Comments 用户评论文章数据库模型
@@ -42,8 +43,9 @@ type Comments struct {
 	gorm.Model
 	ID             int `gorm:"primaryKey;autoIncrement"`
 	ArticleID      int
-	CommentingUser string `gorm:"size:100"`
+	CommentingUser string `gorm:"size:300"`
 	Content        string `gorm:"size:600"`
+	IfAnonymous    bool
 }
 
 // Group 用户组数据库模型
@@ -70,14 +72,6 @@ type UserGroup struct {
 	GroupID int
 }
 
-// UserLikes 用户点赞文章数据库模型
-type UserLikes struct {
-	gorm.Model
-	ID         int `gorm:"primaryKey;autoIncrement"`
-	ArticleID  int
-	LikeUserID int
-}
-
 // MessageBoard 用户首页留言版数据库模型
 type MessageBoard struct {
 	gorm.Model
@@ -85,4 +79,11 @@ type MessageBoard struct {
 	PostUser    string `gorm:"size:100"`
 	Content     string `gorm:"size:600"`
 	IfAnonymous bool
+}
+
+// ArticleTags 文章分类标签 数据库模型
+type ArticleTags struct {
+	gorm.Model
+	ID  int    `gorm:"primaryKey;autoIncrement"`
+	Tag string `gorm:"size:100;unique"`
 }
