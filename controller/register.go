@@ -66,7 +66,12 @@ func RegisterPOST(ctx *gin.Context) {
 	salt := strconv.FormatInt(timeNow, 10)
 	hashPwd := common.GetHashPassword(password, salt)
 	//写入数据库
-	AddUserInfo := models.Users{Username: username, HashPassword: hashPwd, Salt: salt, Phone: phone, Active: true}
+	AddUserInfo := models.Users{
+		Username:     username,
+		HashPassword: hashPwd,
+		Salt:         salt,
+		Phone:        phone,
+		Active:       true}
 	db.Create(&AddUserInfo)
 	//返回HTML
 	ctx.HTML(200, "user/register.html", gin.H{
