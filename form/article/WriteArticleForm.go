@@ -7,4 +7,5 @@ type WriteArticleForm struct {
 	BlogContentOverview string `form:"BlogContentOverview" binding:"required"`
 	Anonymous           string `form:"anonymous"`
 	Content             string `form:"summernote" binding:"required"`
+	Tag                 string `form:"tag" binding:"required"`
 }
