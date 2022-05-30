@@ -56,7 +56,16 @@ func InitDB() {
 		return
 	}
 	//自动创建表结构
-	db.AutoMigrate(&models.Users{}, &models.UserGroup{}, &models.Permissions{}, &models.Group{}, &models.Comments{}, &models.Articles{}, &models.UserLikes{}, &models.MessageBoard{})
+	db.AutoMigrate(
+		&models.Users{},
+		&models.UserGroup{},
+		&models.Permissions{},
+		&models.Group{},
+		&models.Comments{},
+		&models.Articles{},
+		&models.MessageBoard{},
+		&models.ArticleTags{},
+	)
 	DB = db
 
 }
