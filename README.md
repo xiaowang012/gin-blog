@@ -14,7 +14,7 @@
 
 ### （3）修改密码页面
 
-![](./img/pwd.png.png)
+![](./img/pwd.png)
 
 ### （4） Blog主页
 
