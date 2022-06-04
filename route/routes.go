@@ -49,5 +49,10 @@ func Route(r *gin.Engine) *gin.Engine {
 	//文章列表页面相关路由
 	r.GET("/article/list", controller.ArticleList)
 
+	//我的文章
+	r.GET("/my", controller.MyArticle)
+	r.GET("/my/articles", controller.MyArticlePage)
+	r.GET("/my/articles/Delete", controller.MyArticleDelete)
+
 	return r
 }
