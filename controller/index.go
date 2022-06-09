@@ -180,6 +180,7 @@ func IndexMessageBoard(ctx *gin.Context) {
 	err := ctx.ShouldBind(&SendMessage)
 	if err != nil {
 		fmt.Println(err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/index")
 		return
 	}
 	//获取留言用户，留言信息，是否匿名参数
@@ -189,13 +190,15 @@ func IndexMessageBoard(ctx *gin.Context) {
 	//判断数据长度 5<username<=20 5<password<=20 phone = 11
 	if len(username) <= 5 && len(username) > 20 {
 		fmt.Println("用户名长度范围为:5-20!")
+		ctx.Redirect(http.StatusMovedPermanently, "/index")
 		return
 	}
 	if len(content) > 600 {
 		fmt.Println("留言信息长度最大为:200!")
+		ctx.Redirect(http.StatusMovedPermanently, "/index")
 		return
 	}
-	fmt.Println(anonymous)
+	//fmt.Println(anonymous)
 	//写入数据库
 	var Value bool
 	if anonymous == "on" {
@@ -209,7 +212,7 @@ func IndexMessageBoard(ctx *gin.Context) {
 		Content:     content,
 		IfAnonymous: Value}
 	db.Create(&MessageInfo)
-	ctx.Redirect(http.StatusTemporaryRedirect, "/index")
+	ctx.Redirect(http.StatusMovedPermanently, "/index")
 }
 
 // IndexMessageDelete 首页留言板删除留言信息
