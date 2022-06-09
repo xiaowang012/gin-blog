@@ -53,6 +53,9 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/my", controller.MyArticle)
 	r.GET("/my/articles", controller.MyArticlePage)
 	r.GET("/my/articles/Delete", controller.MyArticleDelete)
-
+	r.POST("/my/articles/Search", controller.MyArticleSearch)
+	r.GET("/my/articles/Search", controller.MyArticleSearchPage)
+	r.GET("/my/articles/edit", controller.MyArticleUpdateArticlePage)
+	r.POST("/my/articles/edit", controller.MyArticleUpdateArticle)
 	return r
 }
