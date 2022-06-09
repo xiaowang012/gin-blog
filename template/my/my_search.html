@@ -1,9 +1,9 @@
-{{ define "articleList/list.html" }}
+{{ define "my/my_search.html" }}
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8"> 
-	<title>Blog-文章分类</title>
+	<title>Blog-我的文章</title>
     <link rel="icon" href="../../static/imgs/index/title.png" type="image/x-icon"> 
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
@@ -26,12 +26,12 @@
                         <img style="margin-top: 70px;" alt="" height="60px" width="" src="../../static/imgs/index/title1.png" />
                     </div>
                     <div class="col-md-6 column">
-                        <form role="form" action="/searchArticles" method="post" class="form-inline">
+                        <form role="form" action="/my/articles/Search" method="post" class="form-inline">
                             <div class="form-group">
 
                                 <label style="margin-top: 100px;" for="articleName"></label><input  placeholder="搜索文章!"  style="width: 400px;" type="text" class="form-control" id="articleName" name="articleName" />
                                 <button type="submit" style="width: 60px;margin-left: 20px;" class="btn btn-primary">搜索</button>
-                                <a role="button" style="width: 60px;" href="/index" class="btn btn-default">重置</a>
+                                <a role="button" style="width: 60px;" href="/my" class="btn btn-default">重置</a>
                                 
                             </div>
                         </form>
@@ -39,28 +39,16 @@
                     <div class="col-md-4 column"> 
                         <a  style="margin-top: 85px;" href="/article/WriteArticle" role="button" class="btn btn-info">写Blog</a>
                     </div>
+
                 </div>
-              
-                <div class="col-md-8 column">
-                    <!-- 消息提醒 -->
-                    <div style="margin-top: 10px;" class= "{{ .style }}">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-                            <strong>{{ .msg }}</strong>   
-                    </div>
-                    <div class="col-md-12 column">
-                        <div style="margin-top: 20px;">
-                            {{ range $v := .tagsHtml }}
-                                {{ $v | tran }}  
-                            {{ end }}
-                        </div>
-                    </div> 
-                    <div style="margin-top: 20px;" class="col-md-12" >
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    文章列表 &nbsp&nbsp{{ .articleNum }}篇
-                                </h3>
-                            </div>
+            
+
+                <div class="row clearfix">
+                    <div class="col-md-8 column">
+                        <!-- 消息提醒 -->
+                        <div style="margin-top: 10px;" class= "{{ .style }}">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+                                <strong>{{ .msg }}</strong>   
                         </div>
                         <!-- 文章列表 -->
                         {{ range .articles }}
@@ -70,45 +58,22 @@
                                         {{ .BlogTitle }}
                                     </h3>
                                     <p>
-                                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ .BlogContentOverview }}......
+                                        <a class="btn btn-default" href="/my/articles/edit?id={{ .ID }}">编辑</a>
+                                        <button  class="btn btn-success" onclick="delete_confirm('/my/articles/Delete?id={{ .ID }}')">删除</button>
                                     </p>
-                                    <p>
-                                        <a class="btn btn-default" href="/article/details?id={{ .ID }}">查看详情</a>
-                                        {{ $redirectUrl := "/article/list?tag=Python&page=1" }}
-                                        <a class="btn btn-success"  href="/article/addLikes?id={{ .ID }}&url={{ $redirectUrl }}">点赞</a>
-                                    </p>   
                                 </div>
                             </div>
                         {{ end }}
-                    </div>
-                    <div class="col-md-12" >
-                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/article/list?tag=Python&page=1" >返回首页</a>
+                        <!-- 分页 -->
                         {{ $page := add .currentPage -1 }}
                         {{if lt $page 1}}
-                            <a style="margin-left: 470px; font-size: small;margin-top: 10px;" role="button" class="btn btn-info" href="/article/list?tag={{ .tag }}&page=1" >上一页</a>
+                            <a style="margin-left: 580px; font-size: small;margin-top: 10px;" role="button" class="btn btn-info" href="/my/articles/Search?search={{ .kw }}&pageNumber=1" >上一页</a>
                         {{ else }}
-                            <a style="margin-left: 470px; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/article/list?tag={{ .tag }}&page={{add .currentPage -1 }}" >上一页</a>
+                            <a style="margin-left: 580px; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/my/articles/Search?search={{ .kw }}&pageNumber={{add .currentPage -1 }}" >上一页</a>
                         {{end}}
-                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/article/list?tag={{ .tag }}&page={{add .currentPage 1 }}" >下一页</a>
+                        <a style="float: right; font-size: small;margin-top: 10px;" role="button" class="btn btn-info" href="/my/articles/Search?search={{ .kw }}&pageNumber={{add .currentPage 1 }}" >下一页</a>
                     </div>
-                    
-                    
-                </div>
-                <div class="col-md-4 column">
-                    <div style="margin-top: 40px;" class="col-md-12" >
-                        <span style="font-size: medium;" class="label label-info">高赞文章</span>
-                        {{ range $a := .articleLikesHtml }}
-                            {{ $a | tran }}
-                        {{ end }}
-                        
-                    </div>
-                    
-                </div>
-
-                <div class="row clearfix">
-                    <div class="col-md-8 column">
-                    </div>
-                    <div class="col-md-4 column">    
+                    <div class="col-md-4 column">
                     </div>
                 </div>
                 <nav style="height: 20px;" class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -127,9 +92,7 @@
             </div>
         </div>
     </div>
-    
 </body>
 </html>
 {{ end }}
-
 
