@@ -60,6 +60,11 @@ func LoginPOST(ctx *gin.Context) {
 		ctx.HTML(422, "user/login.html", gin.H{"message": " 用户不存在! "})
 		return
 	}
+	//判断用户账号是否被禁用
+	if user.Active == false {
+		ctx.HTML(422, "user/login.html", gin.H{"message": " 用户账号已经被禁用! 请联系管理员解除! "})
+		return
+	}
 	//获取密码和salt
 	salt := user.Salt
 	pwd := user.HashPassword
