@@ -57,5 +57,12 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/my/articles/Search", controller.MyArticleSearchPage)
 	r.GET("/my/articles/edit", controller.MyArticleUpdateArticlePage)
 	r.POST("/my/articles/edit", controller.MyArticleUpdateArticle)
+
+	//后台管理
+	//用户管理路由
+	r.GET("/management", controller.UserManagement)
+	r.GET("/management/user/page", controller.UserManagementPage)
+	r.GET("/management/user/disable", controller.UserManagementDisableUser)
+	r.GET("management/user/enable", controller.UserManagementEnableUser)
 	return r
 }
