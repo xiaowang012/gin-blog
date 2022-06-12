@@ -144,5 +144,5 @@ func UserInfoUpdate(ctx *gin.Context) {
 		db.Model(&user).Updates(models.Users{Nickname: Nickname, Email: Email, PicturePath: filePath,
 			Birthday: Birthday, Age: Age, Phone: Phone})
 	}
-	ctx.Redirect(http.StatusTemporaryRedirect, "/index/userinfo")
+	ctx.Redirect(http.StatusMovedPermanently, "/index/userinfo")
 }
