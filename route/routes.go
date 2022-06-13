@@ -58,11 +58,31 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/my/articles/edit", controller.MyArticleUpdateArticlePage)
 	r.POST("/my/articles/edit", controller.MyArticleUpdateArticle)
 
-	//后台管理
 	//用户管理路由
 	r.GET("/management", controller.UserManagement)
 	r.GET("/management/user/page", controller.UserManagementPage)
 	r.GET("/management/user/disable", controller.UserManagementDisableUser)
 	r.GET("management/user/enable", controller.UserManagementEnableUser)
+	r.GET("/management/user/delete", controller.UserManagementDeleteUser)
+	r.GET("/management/user/add", controller.UserManagementAddUser)
+	r.GET("/management/user/update", controller.UserManagementUpdateUser)
+	r.POST("/management/user/import", controller.UserManagementImportUsers)
+	r.POST("/management/user/searchUser", controller.UserManagementSearchUsers)
+	r.GET("/management/user/searchUser/page", controller.UserManagementSearchUsersPage)
+
+	//权限管理路由
+	r.GET("/management/permission", controller.PermissionManagement)
+	//文章管理路由
+
+	//角色管理路由
+
+	//标签管理路由
+
+	//留言板管理路由
+
+	//评论管理路由
+
+	//点赞管理路由
+
 	return r
 }
