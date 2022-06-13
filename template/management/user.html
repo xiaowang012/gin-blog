@@ -53,7 +53,7 @@
                             <div style="margin-top: 20px;" class="tabbable" id="tabs-577358">
                                 <ul class="nav nav-tabs">
                                     <li class="active" >
-                                        <a href="/management/user" >用户管理</a>
+                                        <a href="/management" >用户管理</a>
                                     </li>
                                     <li  >
                                         <a href="/management/permission">权限管理</a>
@@ -167,7 +167,7 @@
                                                 <button class="btn btn-primary" style="font-size: xx-small;" onclick="close_confirm('/management/user/disable?id={{ .ID }}')">停用</button>
                                                 <button class="btn btn-default" style="font-size: xx-small;" onclick="open_confirm('/management/user/enable?id={{ .ID }}')">启用</button>
                                                 <a id="modal-207301" onclick="update_user('{{ .ID }}','{{ .Email }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
-                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/managementUser/delete?id={{ .ID }}')" > 删除</button>
+                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/user/delete?id={{ .ID }}')" > 删除</button>
                                             </td>
                                         </tr>
                                     {{ end }}
