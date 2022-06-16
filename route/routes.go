@@ -64,9 +64,8 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/management/user/disable", controller.UserManagementDisableUser)
 	r.GET("management/user/enable", controller.UserManagementEnableUser)
 	r.GET("/management/user/delete", controller.UserManagementDeleteUser)
-	r.GET("/management/user/add", controller.UserManagementAddUser)
-	r.GET("/management/user/update", controller.UserManagementUpdateUser)
-	r.POST("/management/user/import", controller.UserManagementImportUsers)
+	r.POST("/management/user/add", controller.UserManagementAddUser)
+	r.POST("/management/user/update", controller.UserManagementUpdateUser)
 	r.POST("/management/user/searchUser", controller.UserManagementSearchUsers)
 	r.GET("/management/user/searchUser/page", controller.UserManagementSearchUsersPage)
 
