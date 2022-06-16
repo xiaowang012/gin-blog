@@ -29,9 +29,13 @@
           if(r){window.location.href=url
           }
         }
-        function update_user(id,email) {
+        function update_user(id,nickname,email,birthday,age,phone) {
         $( '#update_id').val(id);
+        $( '#update_nickname').val(nickname);
         $( '#update_email').val(email);
+        $( '#update_birthday').val(birthday);
+        $( '#update_age').val(age);
+        $( '#update_phone').val(phone);
         }
        
     </script>
@@ -166,7 +170,7 @@
                                             <td>
                                                 <button class="btn btn-primary" style="font-size: xx-small;" onclick="close_confirm('/management/user/disable?id={{ .ID }}')">停用</button>
                                                 <button class="btn btn-default" style="font-size: xx-small;" onclick="open_confirm('/management/user/enable?id={{ .ID }}')">启用</button>
-                                                <a id="modal-207301" onclick="update_user('{{ .ID }}','{{ .Email }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
+                                                <a id="modal-207301" onclick="update_user('{{ .ID }}','{{ .Nickname }}','{{ .Email }}','{{ .Birthday }}','{{ .Age }}','{{ .Phone }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
                                                 <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/user/delete?id={{ .ID }}')" > 删除</button>
                                             </td>
                                         </tr>
@@ -219,24 +223,24 @@
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/managementUser/update" method="post" >
+                                <form role="form" action="/management/user/update" method="post" >
                                     <div class="form-group">
                                         <label for="update_id">ID</label><input type="text" class="form-control" name="update_id" readonly="readonly" id="update_id" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_email">昵称</label><input type="text" class="form-control" name="update_email" id="update_email" />
+                                        <label for="update_nickname">昵称</label><input type="text" class="form-control" name="update_nickname" id="update_nickname" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_email">邮箱</label><input type="text" class="form-control" name="update_email" id="update_email" />
+                                        <label for="update_email">邮箱</label><input type="email" class="form-control" name="update_email" id="update_email" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_email">生日</label><input type="text" class="form-control" name="update_email" id="update_email" />
+                                        <label for="update_birthday">生日</label><input type="date" class="form-control" name="update_birthday" id="update_birthday" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_email">年龄</label><input type="text" class="form-control" name="update_email" id="update_email" />
+                                        <label for="update_age">年龄</label><input type="text" class="form-control" name="update_age" id="update_age" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_email">手机号</label><input type="text" class="form-control" name="update_email" id="update_email" />
+                                        <label for="update_phone">手机号</label><input type="text" class="form-control" name="update_phone" id="update_phone" />
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">提交</button>
                                 </form>
@@ -255,15 +259,15 @@
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/managementUser/add" method="post" enctype = "multipart/form-data">
+                                <form role="form" action="/management/user/add" method="post" enctype = "multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="phone">手机号</label><input type="text" class="form-control" name="phone" />
+                                    </div>
                                     <div class="form-group">
                                         <label for="username">用户名</label><input type="text" class="form-control" name="username" />
                                     </div>
                                     <div class="form-group">
                                         <label for="password">密码</label><input type="password" class="form-control" name="password" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">邮箱</label><input type="email" class="form-control" name="email" />
                                     </div>
                                     <div class="form-group">
                                         <label for="group_id">用户组</label>
