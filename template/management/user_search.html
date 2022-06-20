@@ -1,4 +1,4 @@
-{{ define "management/user.html" }}
+{{ define "management/user_search.html" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -201,11 +201,11 @@
                                         <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/user/page?page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/user/searchUser/page?search={{ .kw }}&page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/searchUser/page?search={{ .kw }}&page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/searchUser/page?search={{ .kw }}&page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
