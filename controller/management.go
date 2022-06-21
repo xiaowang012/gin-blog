@@ -10,7 +10,9 @@ import (
 	"gin-blog/models"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
@@ -66,7 +68,7 @@ func UserManagementPage(ctx *gin.Context) {
 	}
 	//查询用户表的数据，限制返回10条
 	var users []models.Users
-	db.Limit(pageNumberInt * 10).Offset((pageNumberInt - 1) * 10).Order("created_at desc").Find(&users)
+	db.Limit(10).Offset((pageNumberInt - 1) * 10).Order("created_at desc").Find(&users)
 	//返回数据到HTML
 	ctx.HTML(200, "management/user.html", gin.H{
 		"currentUser": currentUserInfo.UserName,
@@ -139,7 +141,7 @@ func UserManagementSearchUsersPage(ctx *gin.Context) {
 	}
 	//查询用户信息
 	var searchUsers []models.Users
-	db.Where(fmt.Sprintf(" username like %q ", "%"+searchInfo+"%")).Limit(pageNumberInt * 10).Offset((pageNumberInt - 1) * 10).Find(&searchUsers)
+	db.Where(fmt.Sprintf(" username like %q ", "%"+searchInfo+"%")).Limit(10).Offset((pageNumberInt - 1) * 10).Find(&searchUsers)
 	//返回数据到HTML
 	ctx.HTML(200, "management/user_search.html", gin.H{
 		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(searchUsers)),
@@ -527,7 +529,7 @@ func PermissionManagementPage(ctx *gin.Context) {
 	//查询 permissions
 	var permissionsInfo []models.Permissions
 	//查询数据库
-	db.Limit(pageNumberInt * 10).Offset((pageNumberInt - 1) * 10).Find(&permissionsInfo)
+	db.Limit(10).Offset((pageNumberInt - 1) * 10).Find(&permissionsInfo)
 	//返回数据到HTML
 	ctx.HTML(200, "management/permission.html", gin.H{
 		"currentUser": userinfoNew.UserName,
@@ -754,4 +756,232 @@ func PermissionManagementDeletePermission(ctx *gin.Context) {
 	db.Delete(&permissionInfo)
 	ctx.Redirect(http.StatusMovedPermanently, "/management/permission")
 
+}
+
+//PermissionManagementSearchPermissionByGroup 后台管理权限管理根据用户组分类筛选
+func PermissionManagementSearchPermissionByGroup(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取db
+	db := common.GetDB()
+	//获取类型参数
+	GroupName := ctx.Query("type")
+	//根据GroupName 查询数据库
+	var permissionsInfo []models.Permissions
+	db.Where("group_name = ?", GroupName).Limit(10).Find(&permissionsInfo)
+	//返回HTML
+	ctx.HTML(200, "management/permission_type.html", gin.H{
+		"currentPage": 1,
+		"currentUser": currentUserInfo.UserName,
+		"permissions": permissionsInfo,
+		"type":        GroupName,
+	})
+}
+
+//PermissionManagementSearchPermissionByGroupPage 后台管理权限管理根据用户组分类筛选分页
+func PermissionManagementSearchPermissionByGroupPage(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取db
+	db := common.GetDB()
+	//获取类型,页码参数
+	GroupName := ctx.Query("type")
+	PageNumber := ctx.Query("page")
+	//将pageNumber 转换为int
+	PageNumberInt, err := strconv.Atoi(PageNumber)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/permission")
+		return
+	}
+	//根据GroupName 查询数据库
+	var permissionsInfo []models.Permissions
+	db.Where("group_name = ?", GroupName).Limit(10).Offset((PageNumberInt - 1) * 10).Find(&permissionsInfo)
+	//返回HTML
+	ctx.HTML(200, "management/permission_type.html", gin.H{
+		"currentPage": PageNumberInt,
+		"currentUser": currentUserInfo.UserName,
+		"permissions": permissionsInfo,
+		"type":        GroupName,
+	})
+}
+
+//PermissionManagementSearchPermission 后台管理权限管理根据url查询permission
+func PermissionManagementSearchPermission(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser")
+	currentUser := currentUserInfo.(UserInfo).UserName
+	//获取redis中用户管理首页的用户数据切片
+	var permissions []models.Permissions
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "management_permission_page_1").Bytes()
+	if err != nil {
+		fmt.Println("读取management_permission_page_1失败!")
+	} else {
+		err = json.Unmarshal(val, &permissions)
+		if err != nil {
+			fmt.Println("解析management_permission_page_1错误:" + err.Error())
+		}
+	}
+	//获取db连接
+	db := common.GetDB()
+	var searchPermissionInfo permission.SearchPermission
+	//获取登录参数
+	err = ctx.ShouldBind(&searchPermissionInfo)
+	//表单出错
+	if err != nil {
+		ctx.HTML(422, "management/permission.html", gin.H{
+			"currentUser": currentUser,
+			"msg":         "错误: " + err.Error(),
+			"style":       "alert alert-dismissible alert-danger",
+			"permissions": permissions,
+			"currentPage": 1,
+		})
+		return
+	}
+	//获取查询参数
+	Url := searchPermissionInfo.Url
+	//查表
+	var searchPer []models.Permissions
+	db.Where(fmt.Sprintf(" url like %q ", "%"+Url+"%")).Limit(10).Find(&searchPer)
+	ctx.HTML(200, "management/permission_search.html", gin.H{
+		"currentUser": currentUser,
+		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(searchPer)),
+		"style":       "alert alert-success alert-dismissable",
+		"permissions": searchPer,
+		"currentPage": 1,
+		"kw":          Url,
+	})
+
+}
+
+//PermissionManagementSearchPermissionPage 后台管理权限管理根据url查询permission分页
+func PermissionManagementSearchPermissionPage(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser")
+	currentUser := currentUserInfo.(UserInfo).UserName
+	//获取redis中用户管理首页的用户数据切片
+	var permissions []models.Permissions
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "management_permission_page_1").Bytes()
+	if err != nil {
+		fmt.Println("读取management_permission_page_1失败!")
+	} else {
+		err = json.Unmarshal(val, &permissions)
+		if err != nil {
+			fmt.Println("解析management_permission_page_1错误:" + err.Error())
+		}
+	}
+	//获取db连接
+	db := common.GetDB()
+	//获取查询参数
+	Url := ctx.Query("search")
+	PageNumber := ctx.Query("page")
+	//将PageNumber 转换为int
+	PageNumberInt, err := strconv.Atoi(PageNumber)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/permission")
+		return
+	}
+	//查表
+	var searchPer []models.Permissions
+	db.Where(fmt.Sprintf(" url like %q ", "%"+Url+"%")).Limit(10).Offset((PageNumberInt - 1) * 10).Find(&searchPer)
+	ctx.HTML(200, "management/permission_search.html", gin.H{
+		"currentUser": currentUser,
+		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(searchPer)),
+		"style":       "alert alert-success alert-dismissable",
+		"permissions": searchPer,
+		"currentPage": PageNumberInt,
+		"kw":          Url,
+	})
+
+}
+
+//PermissionManagementImportPermission 后台管理权限管理Excel导入权限
+func PermissionManagementImportPermission(ctx *gin.Context) {
+	//获取redis 中的权限数据
+	var permissionsInfo []models.Permissions
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "management_permission_page_1").Bytes()
+	if err != nil {
+		fmt.Println("读取management_permission_page_1失败!")
+	} else {
+		err = json.Unmarshal(val, &permissionsInfo)
+		if err != nil {
+			fmt.Println("解析management_permission_page_1错误:" + err.Error())
+		}
+	}
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取db
+	db := common.GetDB()
+	//获取excel文件
+	var filePath string
+	file, err := ctx.FormFile("permission_excel_file")
+	if err != nil {
+		fmt.Println("接收文件错误:" + err.Error())
+	} else {
+		//保存到指定文件
+		fileName := strconv.FormatInt(time.Now().UnixNano(), 10) + file.Filename
+		curDir, err := os.Getwd()
+		if err != nil {
+			fmt.Println("获取当前工作目录失败: " + err.Error())
+			return
+		}
+		filePath = "/temp/" + fileName
+		err = ctx.SaveUploadedFile(file, curDir+filePath)
+		if err != nil {
+			fmt.Println("保存Excel文件错误：" + err.Error())
+			return
+		}
+		//读取excel文件
+		f, err := excelize.OpenFile(curDir + filePath)
+		if err != nil {
+			fmt.Println("读取excel文件错误: " + err.Error())
+			return
+		}
+		defer func() {
+			if err := f.Close(); err != nil {
+				fmt.Println("关闭excel错误: " + err.Error())
+			}
+		}()
+		// 获取 Sheet1 上所有单元格数据
+		rows, err := f.GetRows("Sheet1")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		//定义一个空切片接收excel数据
+		var PermissionInfo []models.Permissions
+		//核对表头数据是否一致
+		//fmt.Println(rows[0])
+		if rows[0][0] == "URL" && rows[0][1] == "Description" && rows[0][2] == "GroupName" {
+			for index, row := range rows {
+				if index != 0 {
+					PermissionInfo = append(PermissionInfo, models.Permissions{Url: row[0], Description: row[1], GroupName: row[2]})
+				}
+			}
+		} else {
+			//表头数据格式错误!
+			fmt.Println("表头数据格式错误!-----------------")
+			return
+		}
+		//批量插入数据库
+		db.Create(&PermissionInfo)
+		//返回html
+		ctx.HTML(200, "management/permission.html", gin.H{
+			"currentUser": currentUserInfo.UserName,
+			"msg":         fmt.Sprintf("批量导入 %d 条数据成功! ", len(PermissionInfo)),
+			"style":       "alert alert-success alert-dismissable",
+			"permissions": permissionsInfo,
+			"currentPage": 1,
+		})
+
+	}
 }
