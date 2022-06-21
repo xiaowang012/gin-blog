@@ -75,6 +75,11 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.POST("/management/permission/add", controller.PermissionManagementAddPermission)
 	r.POST("/management/permission/update", controller.PermissionManagementUpdatePermission)
 	r.GET("/management/permission/delete", controller.PermissionManagementDeletePermission)
+	r.GET("/management/permission/search/type", controller.PermissionManagementSearchPermissionByGroup)
+	r.GET("/management/permission/search/type/page", controller.PermissionManagementSearchPermissionByGroupPage)
+	r.POST("/management/permission/search", controller.PermissionManagementSearchPermission)
+	r.GET("/management/permission/search/page", controller.PermissionManagementSearchPermissionPage)
+	r.POST("/management/permission/import", controller.PermissionManagementImportPermission)
 
 	//文章管理路由
 
