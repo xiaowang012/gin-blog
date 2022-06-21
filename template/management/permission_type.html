@@ -1,4 +1,4 @@
-{{ define "management/permission.html" }}
+{{ define "management/permission_type.html" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -184,11 +184,11 @@
                                         <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/permission" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/permission/page?page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/page?page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/page?page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
@@ -271,12 +271,12 @@
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/permission/import" method="post" enctype = "multipart/form-data">
+                                <form role="form" action="/managementUser/import" method="post" enctype = "multipart/form-data">
                                     <div style="margin-top: 15px;" class="form-group">
-                                            <label for="permission_excel_file">请上传EXCEL文件</label><input role="button"  type="file" name="permission_excel_file" />
+                                            <label for="user_file">请上传EXCEL文件</label><input role="button"  type="file" name="user_file" />
                                         <p style="margin-top: 10px;" class="help-block">
                                             模板下载链接如下:
-                                            <a href="/static/exceltemplatefile/permission/template_permission.zip">点击下载</a>
+                                            <a href="/managementUser/download">点击下载</a>
                                         </p>
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">导入</button>
