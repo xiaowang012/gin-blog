@@ -150,7 +150,7 @@ func MyArticleSearchPage(ctx *gin.Context) {
 	}
 	//定义接收mysql article，messages数据的slice
 	var articles []models.Articles
-	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+name+"%")).Limit(pageNumberInt * 10).Offset((pageNumberInt - 1) * 10).Find(&articles)
+	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+name+"%")).Limit(10).Offset((pageNumberInt - 1) * 10).Find(&articles)
 	//返回数据到HTML
 	ctx.HTML(200, "my/my_search.html", gin.H{
 		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(articles)),

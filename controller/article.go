@@ -124,7 +124,7 @@ func SearchArticlesPage(ctx *gin.Context) {
 	var articles []models.Articles
 	var messages []models.MessageBoard
 	db.Limit(5).Offset(0).Order("created_at desc").Find(&messages)
-	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+searchInfo+"%")).Limit(pageNumberInt * 5).Offset((pageNumberInt - 1) * 5).Find(&articles)
+	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+searchInfo+"%")).Limit(5).Offset((pageNumberInt - 1) * 5).Find(&articles)
 	//根据messages切片中的IfAnonymous 字段是否为true,然后复制到新切片
 	var messagesNew []models.MessageBoard
 	for _, val := range messages {
