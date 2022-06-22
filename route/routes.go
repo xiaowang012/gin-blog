@@ -82,6 +82,12 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.POST("/management/permission/import", controller.PermissionManagementImportPermission)
 
 	//文章管理路由
+	r.GET("/management/articles", controller.ArticlesManagement)
+	r.GET("/management/articles/page", controller.ArticlesManagementPage)
+	//根据标题查询文章
+	r.POST("/management/articles/search", controller.ArticlesManagementSearchArticles)
+	r.GET("/management/articles/search/page", controller.ArticlesManagementSearchArticlesPage)
+	r.GET("/management/articles/delete", controller.ArticlesManagementDeleteArticle)
 
 	//角色管理路由
 
