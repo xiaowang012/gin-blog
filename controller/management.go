@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gin-blog/common"
+	"gin-blog/form/management/article"
 	"gin-blog/form/management/permission"
 	"gin-blog/form/management/user"
 	"gin-blog/models"
@@ -974,6 +975,8 @@ func PermissionManagementImportPermission(ctx *gin.Context) {
 		}
 		//批量插入数据库
 		db.Create(&PermissionInfo)
+		//删除临时excel文件
+		err = os.Remove(curDir + filePath)
 		//返回html
 		ctx.HTML(200, "management/permission.html", gin.H{
 			"currentUser": currentUserInfo.UserName,
@@ -984,4 +987,174 @@ func PermissionManagementImportPermission(ctx *gin.Context) {
 		})
 
 	}
+}
+
+//ArticlesManagement 后台管理 文章管理页面
+func ArticlesManagement(ctx *gin.Context) {
+	//获取db连接
+	db := common.GetDB()
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//查询前10篇文章，按时间降序排列
+	var articlesInfo []models.Articles
+	db.Limit(10).Order("created_at desc").Find(&articlesInfo)
+	//获取redis连接
+	rdb := common.GetRedis()
+	//判断redis中是否存在key management_articles_page_1
+	_, err := rdb.Get(context.Background(), "management_articles_page_1").Bytes()
+	if err != nil {
+		byteData, err := json.Marshal(articlesInfo)
+		if err != nil {
+			fmt.Println("article转换数据错误: " + err.Error())
+		} else {
+			err = rdb.Set(context.Background(), "management_articles_page_1", byteData, time.Minute*10).Err()
+			if err != nil {
+				println("SET KEY: management_articles_page_1错误:" + err.Error())
+			}
+		}
+	}
+	//返回数据到HTML
+	ctx.HTML(200, "management/article.html", gin.H{
+		"currentUser": currentUserInfo.UserName,
+		"articles":    articlesInfo,
+		"currentPage": 1,
+	})
+
+}
+
+//ArticlesManagementPage 后台管理 文章管理页面 分页
+func ArticlesManagementPage(ctx *gin.Context) {
+	//获取db连接
+	db := common.GetDB()
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取页码参数
+	pageNumber := ctx.Query("page")
+	//将页码转换为int
+	//将PageNumber 转换为int
+	PageNumberInt, err := strconv.Atoi(pageNumber)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
+		return
+	}
+	//根据页码查询前10篇文章，按时间降序排列
+	var articlesInfo []models.Articles
+	db.Limit(10).Offset((PageNumberInt - 1) * 10).Order("created_at desc").Find(&articlesInfo)
+	//返回数据到HTML
+	ctx.HTML(200, "management/article.html", gin.H{
+		"currentUser": currentUserInfo.UserName,
+		"articles":    articlesInfo,
+		"currentPage": PageNumberInt,
+	})
+
+}
+
+//ArticlesManagementSearchArticles  后台管理文章管理根据标题查询文章
+func ArticlesManagementSearchArticles(ctx *gin.Context) {
+	//从redis中获取article 数据第一页
+	var articlesInfo []models.Articles
+	rdb := common.GetRedis()
+	val, err := rdb.Get(context.Background(), "management_articles_page_1").Bytes()
+	if err != nil {
+		fmt.Println("读取management_articles_page_1失败!")
+	} else {
+		err = json.Unmarshal(val, &articlesInfo)
+		if err != nil {
+			fmt.Println("解析management_articles_page_1错误:" + err.Error())
+		}
+	}
+	//获取当前用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser")
+	currentUser := currentUserInfo.(UserInfo).UserName
+	//获取db连接
+	db := common.GetDB()
+	var searchInfo article.SearchArticles
+	//获取登录参数
+	err = ctx.ShouldBind(&searchInfo)
+	//表单出错
+	if err != nil {
+		ctx.HTML(200, "management/article.html", gin.H{
+			"currentUser": currentUser,
+			"msg":         "表单错误: " + err.Error(),
+			"style":       "alert alert-dismissible alert-danger",
+			"articles":    articlesInfo,
+			"currentPage": 1,
+		})
+		return
+	}
+	//获取查询参数
+	name := searchInfo.BlogTitle
+	//查表
+	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+name+"%")).Limit(10).Find(&articlesInfo)
+	ctx.HTML(200, "management/article_search.html", gin.H{
+		"currentUser": currentUser,
+		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(articlesInfo)),
+		"style":       "alert alert-success alert-dismissable",
+		"articles":    articlesInfo,
+		"currentPage": 1,
+		"kw":          name,
+	})
+
+}
+
+//ArticlesManagementSearchArticlesPage  后台管理文章管理根据标题查询文章分页
+func ArticlesManagementSearchArticlesPage(ctx *gin.Context) {
+	//获取db
+	db := common.GetDB()
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取页码和查询数据
+	pageNumber := ctx.Query("page")
+	BlogTitle := ctx.Query("search")
+	//将pageNumber 转换为int
+	PageNumberInt, err := strconv.Atoi(pageNumber)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
+		return
+	}
+	//根据页码和查询参数查询数据库
+	var articlesInfo []models.Articles
+	db.Where(fmt.Sprintf(" blog_title like %q ", "%"+BlogTitle+"%")).Limit(10).Offset((PageNumberInt - 1) * 10).Find(&articlesInfo)
+	ctx.HTML(200, "management/article_search.html", gin.H{
+		"currentUser": currentUserInfo.UserName,
+		"msg":         fmt.Sprintf("查询成功! 查询到%d条数据", len(articlesInfo)),
+		"style":       "alert alert-success alert-dismissable",
+		"articles":    articlesInfo,
+		"currentPage": PageNumberInt,
+		"kw":          BlogTitle,
+	})
+
+}
+
+//ArticlesManagementDeleteArticle  后台管理文章管理删除文章
+func ArticlesManagementDeleteArticle(ctx *gin.Context) {
+	//获取db连接
+	db := common.GetDB()
+	//获取用户ID参数
+	articleId := ctx.Query("id")
+	//将id 由string转换为int
+	articleIdInt, err := strconv.Atoi(articleId)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
+		return
+	}
+	//根据userId 查询用户
+	var articleInfo models.Articles
+	db.First(&articleInfo, articleIdInt)
+	//判断用户是否存在
+	if articleInfo.ID == 0 {
+		fmt.Println("文章不存在! 无法删除此文章!")
+		ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
+		return
+	}
+	//删除文章
+	db.Delete(&articleInfo)
+	ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
 }
