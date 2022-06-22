@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8"> 
 	<title>Blog-主页</title>
-    <link rel="icon" href="../../static/imgs/index/title.png" type="image/x-icon"> 
+    <link rel="icon" href="/static/imgs/index/title.png" type="image/x-icon"> 
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -23,7 +23,7 @@
             <div class="col-md-12 column">
                 <div class="row clearfix">
                     <div class="col-md-2 column">
-                        <img style="margin-top: 70px;" alt="" height="60px" width="" src="../../static/imgs/index/title1.png" />
+                        <img style="margin-top: 70px;" alt="" height="60px" width="" src="/static/imgs/index/title1.png" />
                     </div>
                     <div class="col-md-6 column">
                         <form role="form" action="/searchArticles" method="post" class="form-inline">
@@ -51,7 +51,7 @@
                     <div class="col-md-8 column">
                         <!-- 文章列表 -->
                         {{ range .articles }}
-                            <div style="margin-top: 10px;background-image: url('../../static/imgs/index/article_background.png');" class="thumbnail">
+                            <div style="margin-top: 10px;background-image: url('/static/imgs/index/article_background.png');" class="thumbnail">
                                 <div class="caption">
                                     <h3>
                                         {{ .BlogTitle }}
@@ -129,7 +129,7 @@
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/my">我的文章</a> 
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/index/userinfo">个人中心</a>
                             <a style="margin-left: 15px;color: black;font-size: larger;" href="/management">管理入口</a>
-                            <img src="../../static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
+                            <img src="/static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
                             <a style="margin-left: 10px;color: black;font-size: larger;" href="/index/userinfo">{{ .currentUser }}</a> 
                             <a style="margin-left: 30px; color: black;font-size: larger;" href="/logout">退出登录</a>
                         </p>

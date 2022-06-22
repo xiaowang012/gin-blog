@@ -1,10 +1,10 @@
-{{ define "management/permission_type.html" }}
+{{ define "management/article.html" }}
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<title>gin-blog-后台管理</title>
-    <link rel="icon" href="/static/imgs/apple.png" type="image/x-icon"> 
+    <link rel="icon" href="/static/imgs/index/title.png" type="image/x-icon"> 
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -29,11 +29,13 @@
           if(r){window.location.href=url
           }
         }
-        function update_permission(id,url,description,group_name) {
+        function update_user(id,nickname,email,birthday,age,phone) {
         $( '#update_id').val(id);
-        $( '#update_url').val(url);
-        $( '#update_description').val(description);
-        $( '#update_group_name').val(group_name);
+        $( '#update_nickname').val(nickname);
+        $( '#update_email').val(email);
+        $( '#update_birthday').val(birthday);
+        $( '#update_age').val(age);
+        $( '#update_phone').val(phone);
         }
        
     </script>
@@ -57,10 +59,10 @@
                                     <li>
                                         <a href="/management" >用户管理</a>
                                     </li>
-                                    <li class="active"  >
+                                    <li  >
                                         <a href="/management/permission">权限管理</a>
                                     </li>
-                                    <li  >
+                                    <li class="active"  >
                                        <a href="/management/articles" >文章管理</a>
                                     </li>
                                     <li  >
@@ -81,34 +83,19 @@
                                 </ul>
                             </div>
                             <div style="margin-top: 20px;margin-left: -10px;" class="col-md-12 column">
-                                <span style="font-size: medium ;" class="label label-info">权限管理</span>
+                                <span style="font-size: medium ;" class="label label-info">文章管理</span>
                             </div>
                             <div class="col-md-12 column">
                                 <nav style="margin-left: -10px;margin-top:10px;" class="navbar navbar-default" role="navigation">
                                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                        <ul class="nav navbar-nav navbar-left">
-                                            <li class="dropdown">
-                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户组<strong class="caret"></strong></a>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a href="/management/permission/search/type?type=admin">管理员</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/management/permission/search/type?type=user">普通用户</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                        <form class="navbar-form navbar-left" role="search" action="/management/permission/search" method="post">
+                                        <form class="navbar-form navbar-left" role="search" action="/management/articles/search" method="post">
                                             <div class="form-group">
-                                                <input placeholder="输入URL搜索" type="text" name="url" class="form-control" />
-                                            </div> <button type="submit" style="margin-left: 10px;" class="btn btn-primary">查询</button><a role="button" class="btn btn-default" style="margin-left: 10px;" href="/management/permission">重置</a>
+                                                <input placeholder="输入文章标题搜索" type="text" name="blog_title" class="form-control" />
+                                            </div> <button type="submit" style="margin-left: 10px;" class="btn btn-primary">查询</button><a role="button" class="btn btn-default" style="margin-left: 10px;" href="/management/articles">重置</a>
                                         </form>
-                                       
                                     </div>
                                 </nav>
                             </div>
-                            
                             <!-- 消息提醒 -->
                             <div class="col-md-12 column">
                                 <div style="margin-top: 10px;" class= "{{ .style }}">
@@ -123,38 +110,79 @@
                                             ID
                                         </th>
                                         <th>
-                                            URL
+                                            发布日期
                                         </th>
                                         <th>
-                                            用户组
+                                            作者
                                         </th>
                                         <th>
-                                            描述信息
+                                            标题
                                         </th>
                                         <th>
-                                            <a id="modal-207299" href="#modal-container-207299" role="button" style="font-size: xx-small;" class="btn btn-primary" data-toggle="modal">添加</a>
-                                            <a id="modal-207300" href="#modal-container-207300" role="button" style="font-size: xx-small;margin-left: 5px;" class="btn btn-success" data-toggle="modal">导入</a>
+                                            概览
+                                        </th>
+                                        <th>
+                                            点赞
+                                        </th>
+                                        <th>
+                                            评论
+                                        </th>
+                                        <th>
+                                            浏览量
+                                        </th>
+                                        <th>
+                                            是否匿名
+                                        </th>
+                                        <th>
+                                            标签
+                                        </th>
+                                        <th>
+                                            操作
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{ range .permissions }}
+                                    {{ range .articles }}
                                         <tr class="info" >
                                             <td>
                                                 {{ .ID }}
                                             </td>
                                             <td>
-                                                {{ .Url }}
+                                                {{ .ReleaseDate }}
                                             </td>
                                             <td>
-                                                {{ .GroupName }}
+                                                {{ .Author }}
                                             </td>
                                             <td>
-                                                {{ .Description }}
+                                                <textarea style="background: rgba(255,255,255,0.5);"  cols="20" rows="3">{{ .BlogTitle }}</textarea>
+                                                
                                             </td>
                                             <td>
-                                                <a id="modal-207301" onclick="update_permission('{{ .ID }}','{{ .Url }}','{{ .Description }}','{{ .GroupName }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
-                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/permission/delete?id={{ .ID }}')" > 删除</button>
+                                                <textarea style="background: rgba(255,255,255,0.5);"  cols="20" rows="3">{{ .BlogContentOverview }}</textarea>
+                                            </td>
+                                            
+                                            <td>
+                                                {{ .Likes }}
+                                            </td>
+                                            <td>
+                                                {{ .Comments }}
+                                            </td>
+                                            <td>
+                                                {{ .NumberOfViews }}
+                                            </td>
+
+                                            <td>
+                                                {{ if .IfAnonymous}}
+                                                    <p>匿名</p>
+                                                {{ else }}
+                                                    <p>实名</p>
+                                                {{ end }}
+                                            </td>
+                                            <td>
+                                                {{ .Tag }}
+                                            </td>
+                                            <td>
+                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/articles/delete?id={{ .ID }}')" > 删除</button>
                                             </td>
                                         </tr>
                                     {{ end }}
@@ -167,7 +195,7 @@
                                         <a style="margin-left: 15px;color: black;font-size: larger;" href="/my">我的文章</a> 
                                         <a style="margin-left: 15px;color: black;font-size: larger;" href="/index/userinfo">个人中心</a>
                                         <a style="margin-left: 15px;color: black;font-size: larger;" href="/management">管理入口</a>
-                                        <img src="../../static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
+                                        <img src="/static/imgs/index/user.png" width="20px" height="20px" style="margin-left: 380px;" alt="">
                                         <a style="margin-left: 10px;color: black;font-size: larger;" href="/index/userinfo">{{ .currentUser }}</a> 
                                         <a style="margin-left: 30px; color: black;font-size: larger;" href="/logout">退出登录</a>
                                     </p>
@@ -181,14 +209,14 @@
                                 <div class="col-md-4 column">
                                     <ul style="float: right;" class="pagination">
                                         <!-- 分页 -->
-                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/permission" >返回首页</a>
+                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/articles" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/articles/page?page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/articles/page?page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/permission/search/type/page?type={{ .type }}&page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/articles/page?page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
@@ -202,26 +230,28 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                                 <h4 class="modal-title" id="myModalLabel">
-                                    修改权限信息
+                                    修改用户信息(用户名不允许修改!)
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/permission/update" method="post" >
+                                <form role="form" action="/management/user/update" method="post" >
                                     <div class="form-group">
                                         <label for="update_id">ID</label><input type="text" class="form-control" name="update_id" readonly="readonly" id="update_id" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_url">Url</label><input type="text" class="form-control" name="update_url" id="update_url" />
+                                        <label for="update_nickname">昵称</label><input type="text" class="form-control" name="update_nickname" id="update_nickname" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_description">描述信息</label><input type="text" class="form-control" name="update_description" id="update_description" />
+                                        <label for="update_email">邮箱</label><input type="email" class="form-control" name="update_email" id="update_email" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_group_name">用户组</label>
-                                        <select name="update_group_name" id="update_group_name" class="form-control">
-                                            <option value="admin">管理员</option>
-                                            <option value="user">普通用户</option>
-                                        </select>
+                                        <label for="update_birthday">生日</label><input type="date" class="form-control" name="update_birthday" id="update_birthday" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_age">年龄</label><input type="text" class="form-control" name="update_age" id="update_age" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_phone">手机号</label><input type="text" class="form-control" name="update_phone" id="update_phone" />
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">提交</button>
                                 </form>
@@ -236,22 +266,25 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                                 <h4 class="modal-title" id="myModalLabel">
-                                    添加权限
+                                    添加用户
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/permission/add" method="post" enctype = "multipart/form-data">
+                                <form role="form" action="/management/user/add" method="post" enctype = "multipart/form-data">
                                     <div class="form-group">
-                                        <label for="url">URL</label><input type="text" class="form-control" name="url" />
+                                        <label for="phone">手机号</label><input type="text" class="form-control" name="phone" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="description">描述信息</label><input type="text" class="form-control" name="description" />
+                                        <label for="username">用户名</label><input type="text" class="form-control" name="username" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="group_name">用户组</label>
-                                        <select name="group_name" class="form-control">
-                                            <option value="admin">管理员</option>
-                                            <option value="user">普通用户</option>
+                                        <label for="password">密码</label><input type="password" class="form-control" name="password" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="group_id">用户组</label>
+                                        <select name="group_id" class="form-control">
+                                            <option value="1">管理员</option>
+                                            <option value="2">顾客</option>
                                         </select>
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">提交</button>
@@ -267,7 +300,7 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                                 <h4 class="modal-title" id="myModalLabel">
-                                    导入权限
+                                    导入用户
                                 </h4>
                             </div>
                             <div class="modal-body">
