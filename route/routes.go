@@ -90,6 +90,8 @@ func Route(r *gin.Engine) *gin.Engine {
 	r.GET("/management/articles/delete", controller.ArticlesManagementDeleteArticle)
 
 	//角色管理路由
+	r.GET("/management/roles", controller.RolesManagement)
+	r.GET("/management/roles/page", controller.RolesManagementPage)
 
 	//标签管理路由
 
