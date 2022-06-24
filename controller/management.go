@@ -1158,3 +1158,65 @@ func ArticlesManagementDeleteArticle(ctx *gin.Context) {
 	db.Delete(&articleInfo)
 	ctx.Redirect(http.StatusMovedPermanently, "/management/articles")
 }
+
+//RolesManagement  后台管理角色管理 页面
+func RolesManagement(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取db
+	db := common.GetDB()
+	//查询前10条角色信息，按时间降序排列
+	var rolesInfo []models.Group
+	db.Limit(10).Order("created_at desc").Find(&rolesInfo)
+	//获取redis连接
+	rdb := common.GetRedis()
+	//判断redis中是否存在key management_roles_page_1
+	_, err := rdb.Get(context.Background(), "management_roles_page_1").Bytes()
+	if err != nil {
+		byteData, err := json.Marshal(rolesInfo)
+		if err != nil {
+			fmt.Println("roles转换数据错误: " + err.Error())
+		} else {
+			err = rdb.Set(context.Background(), "management_roles_page_1", byteData, time.Minute*10).Err()
+			if err != nil {
+				println("SET KEY: management_roles_page_1错误:" + err.Error())
+			}
+		}
+	}
+	//返回数据到HTML
+	ctx.HTML(200, "management/roles.html", gin.H{
+		"currentUser": currentUserInfo.UserName,
+		"rolesInfo":   rolesInfo,
+		"currentPage": 1,
+	})
+
+}
+
+//RolesManagementPage  后台管理角色管理 页面
+func RolesManagementPage(ctx *gin.Context) {
+	//获取当前登录用户
+	session := sessions.Default(ctx)
+	currentUserInfo := session.Get("currentUser").(UserInfo)
+	//获取页码参数
+	pageNumber := ctx.Query("page")
+	//将pageNumber 转换为int
+	pageNumberInt, err := strconv.Atoi(pageNumber)
+	if err != nil {
+		fmt.Println("参数错误:" + err.Error())
+		ctx.Redirect(http.StatusMovedPermanently, "/management/roles")
+		return
+	}
+	//获取db
+	db := common.GetDB()
+	//查询前10条角色信息，按时间降序排列
+	var rolesInfo []models.Group
+	db.Limit(10).Offset((pageNumberInt - 1) * 10).Order("created_at desc").Find(&rolesInfo)
+	//返回数据到HTML
+	ctx.HTML(200, "management/roles.html", gin.H{
+		"currentUser": currentUserInfo.UserName,
+		"rolesInfo":   rolesInfo,
+		"currentPage": pageNumberInt,
+	})
+
+}
