@@ -1,4 +1,4 @@
-{{ define "management/user.html" }}
+{{ define "management/roles.html" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,7 +56,7 @@
                         <div class="col-md-12 column">
                             <div style="margin-top: 20px;" class="tabbable" id="tabs-577358">
                                 <ul class="nav nav-tabs">
-                                    <li class="active" >
+                                    <li >
                                         <a href="/management" >用户管理</a>
                                     </li>
                                     <li  >
@@ -65,7 +65,7 @@
                                     <li  >
                                        <a href="/management/articles" >文章管理</a>
                                     </li>
-                                    <li  >
+                                    <li  class="active"  >
                                        <a href="/management/roles" >角色管理</a>
                                     </li>
                                     <li>
@@ -83,7 +83,7 @@
                                 </ul>
                             </div>
                             <div style="margin-top: 20px;margin-left: -10px;" class="col-md-12 column">
-                                <span style="font-size: medium ;" class="label label-info">用户管理</span>
+                                <span style="font-size: medium ;" class="label label-info">角色管理</span>
                             </div>
                             <div class="col-md-12 column">
                                 <nav style="margin-left: -10px;margin-top:10px;" class="navbar navbar-default" role="navigation">
@@ -110,67 +110,25 @@
                                             ID
                                         </th>
                                         <th>
-                                            用户名
+                                            角色名
                                         </th>
                                         <th>
-                                            昵称
-                                        </th>
-                                        <th>
-                                            邮箱
-                                        </th>
-                                        <th>
-                                            生日
-                                        </th>
-                                        <th>
-                                            年龄
-                                        </th>
-                                        <th>
-                                            手机号
-                                        </th>
-                                        <th>
-                                            启用状态
-                                        </th>
-                                        <th>
-                                            <a id="modal-207299" href="#modal-container-207299" role="button" style="font-size: xx-small;margin-left: 75px;" class="btn btn-primary" data-toggle="modal">添加</a>
+                                            <a id="modal-207299" href="#modal-container-207299" role="button" style="font-size: xx-small;" class="btn btn-primary" data-toggle="modal">添加</a>
                                             <a id="modal-207300" href="#modal-container-207300" role="button" style="font-size: xx-small;margin-left: 5px;" class="btn btn-success" data-toggle="modal">导入</a>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{ range .users }}
+                                    {{ range .rolesInfo }}
                                         <tr class="info" >
                                             <td>
                                                 {{ .ID }}
                                             </td>
                                             <td>
-                                                {{ .Username }}
+                                                {{ .GroupName }}
                                             </td>
                                             <td>
-                                                {{ .Nickname }}
-                                            </td>
-                                            <td>
-                                                {{ .Email }}
-                                            </td>
-                                            <td>
-                                                {{ .Birthday }}
-                                            </td>
-                                            <td>
-                                                {{ .Age }}
-                                            </td>
-                                            <td>
-                                                {{ .Phone }}
-                                            </td>
-                                            <td>
-                                                {{ if .Active}}
-                                                    <p>启用</p>
-                                                {{ else }}
-                                                    <p>禁用</p>
-                                                {{ end }}
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-primary" style="font-size: xx-small;" onclick="close_confirm('/management/user/disable?id={{ .ID }}')">停用</button>
-                                                <button class="btn btn-default" style="font-size: xx-small;" onclick="open_confirm('/management/user/enable?id={{ .ID }}')">启用</button>
-                                                <a id="modal-207301" onclick="update_user('{{ .ID }}','{{ .Nickname }}','{{ .Email }}','{{ .Birthday }}','{{ .Age }}','{{ .Phone }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
+                                                <a id="modal-207301" onclick="update_user('{{ .ID }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
                                                 <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/user/delete?id={{ .ID }}')" > 删除</button>
                                             </td>
                                         </tr>
@@ -198,14 +156,14 @@
                                 <div class="col-md-4 column">
                                     <ul style="float: right;" class="pagination">
                                         <!-- 分页 -->
-                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management" >返回首页</a>
+                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/roles" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/user/page?page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
