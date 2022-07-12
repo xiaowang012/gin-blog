@@ -92,8 +92,15 @@ func Route(r *gin.Engine) *gin.Engine {
 	//角色管理路由
 	r.GET("/management/roles", controller.RolesManagement)
 	r.GET("/management/roles/page", controller.RolesManagementPage)
+	r.POST("/management/roles/search", controller.RolesManagementSearchRoles)
+	r.GET("/management/roles/search/page", controller.RolesManagementSearchRolesPage)
+	r.POST("/management/roles/add", controller.RolesManagementAddRoles)
+	r.POST("/management/roles/update", controller.RolesManagementUpdateRoles)
+	r.POST("/management/roles/import", controller.RolesManagementImportRoles)
+	r.GET("/management/roles/delete", controller.RolesManagementDeleteRoles)
 
 	//标签管理路由
+	r.GET("/management/tags", controller.TagsManagement)
 
 	//留言板管理路由
 
