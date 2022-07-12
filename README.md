@@ -62,22 +62,42 @@
 
 ![](./img/management_articles.png)
 
-### (15) 后台管理-角色管理界面
+## 2.使用Nginx部署
 
-### (16) 后台管理-标签管理界面
-
-### (17) 后台管理-留言板管理界面
-
-### (18) 后台管理-评论管理界面
-
-### (19) 后台管理-点赞管理界面
+### (1) 将代码打包成二进制 ,使用命令: go build mian.go
+#### 输入 ./main  即可执行二进制文件，若要后台运行: nohup ./main &
+![](./img/build.png)
 
 
+### (2) 安装Nginx ,使用命令：yum install nginx 
+#### 重启nginx: nginx -s reload  启动：nginx  停止：nginx -s stop
+#### nginx的配置，进入/etc/nginx/  使用vim编辑：vim nginx.conf 配置如下：
+![](./img/nginx_config.png)
 
-# 2.部署
+
+### (3) 安装Redis,使用命令：yum install redis
+#### 启动redis:  找到安装路径直接运行即可：./bin/redis-server ,可以通过查看
+#### 6379端口的占用情况判断redis是否运行成功：lsof -i:6379
+![](./img/redis_run.png)
 
 
+### (4) 安装Mysql,使用命令：yum install Mysql
+#### 注意：不要使用简单的密码!  手动创建gin_blog_data 数据库：create database xxx;
+![](./img/mysql.png)
 
-## 感谢
+### (5) 后台运行程序
+#### 使用 nohup ./main &即可运行
+![](./img/gin_run.png)
+#### 查看main是否运行
+![](./img/5003.png)
+
+
+### (6) 测试网站是否部署成功
+#### 访问网页查看图片是否显示正常，能否正常登录等等
+![](./img/test1.png)
+![](./img/test2.png)
+
+
+# 感谢
 
 ![](./img/jetbrains.png)
