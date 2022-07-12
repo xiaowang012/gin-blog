@@ -1,4 +1,4 @@
-{{ define "management/roles.html" }}
+{{ define "management/tags.html" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,9 +29,13 @@
           if(r){window.location.href=url
           }
         }
-        function update_roles(id,GroupName) {
+        function update_user(id,nickname,email,birthday,age,phone) {
         $( '#update_id').val(id);
-        $( '#update_role_name').val(GroupName);
+        $( '#update_nickname').val(nickname);
+        $( '#update_email').val(email);
+        $( '#update_birthday').val(birthday);
+        $( '#update_age').val(age);
+        $( '#update_phone').val(phone);
         }
        
     </script>
@@ -52,7 +56,7 @@
                         <div class="col-md-12 column">
                             <div style="margin-top: 20px;" class="tabbable" id="tabs-577358">
                                 <ul class="nav nav-tabs">
-                                    <li >
+                                    <li>
                                         <a href="/management" >用户管理</a>
                                     </li>
                                     <li  >
@@ -61,10 +65,10 @@
                                     <li  >
                                        <a href="/management/articles" >文章管理</a>
                                     </li>
-                                    <li  class="active"  >
+                                    <li  >
                                        <a href="/management/roles" >角色管理</a>
                                     </li>
-                                    <li>
+                                    <li class="active" >
                                         <a href="/management/tags" >标签管理</a>
                                     </li>
                                     <li>
@@ -79,15 +83,15 @@
                                 </ul>
                             </div>
                             <div style="margin-top: 20px;margin-left: -10px;" class="col-md-12 column">
-                                <span style="font-size: medium ;" class="label label-info">角色管理</span>
+                                <span style="font-size: medium ;" class="label label-info">标签管理</span>
                             </div>
                             <div class="col-md-12 column">
                                 <nav style="margin-left: -10px;margin-top:10px;" class="navbar navbar-default" role="navigation">
                                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                        <form class="navbar-form navbar-left" role="search" action="/management/roles/search" method="post">
+                                        <form class="navbar-form navbar-left" role="search" action="/management/user/searchUser" method="post">
                                             <div class="form-group">
-                                                <input placeholder="输入角色名搜索" type="text" name="role_name" class="form-control" />
-                                            </div> <button type="submit" style="margin-left: 10px;" class="btn btn-primary">查询</button><a role="button" class="btn btn-default" style="margin-left: 10px;" href="/management/roles">重置</a>
+                                                <input placeholder="输入用户名搜索" type="text" name="username" class="form-control" />
+                                            </div> <button type="submit" style="margin-left: 10px;" class="btn btn-primary">查询</button><a role="button" class="btn btn-default" style="margin-left: 10px;" href="/management/tags">重置</a>
                                         </form>
                                     </div>
                                 </nav>
@@ -106,8 +110,9 @@
                                             ID
                                         </th>
                                         <th>
-                                            角色名
+                                            标签
                                         </th>
+                                       
                                         <th>
                                             <a id="modal-207299" href="#modal-container-207299" role="button" style="font-size: xx-small;" class="btn btn-primary" data-toggle="modal">添加</a>
                                             <a id="modal-207300" href="#modal-container-207300" role="button" style="font-size: xx-small;margin-left: 5px;" class="btn btn-success" data-toggle="modal">导入</a>
@@ -115,17 +120,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{ range .rolesInfo }}
+                                    {{ range .tags }}
                                         <tr class="info" >
                                             <td>
                                                 {{ .ID }}
                                             </td>
+                                            
                                             <td>
-                                                {{ .GroupName }}
+                                                {{ .Tag }}
                                             </td>
                                             <td>
-                                                <a id="modal-207301" onclick="update_roles('{{ .ID }}','{{ .GroupName }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
-                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/roles/delete?id={{ .ID }}')" > 删除</button>
+                                                <a id="modal-207301" onclick="update_user('{{ .ID }}','{{ .Tag }}')" href="#modal-container-207301" role="button" style="font-size: xx-small;" class="btn btn-success" data-toggle="modal">修改</a>
+                                                <button style="font-size: xx-small;" class="btn btn-danger" onclick="delete_confirm('/management/user/delete?id={{ .ID }}')" > 删除</button>
                                             </td>
                                         </tr>
                                     {{ end }}
@@ -152,14 +158,14 @@
                                 <div class="col-md-4 column">
                                     <ul style="float: right;" class="pagination">
                                         <!-- 分页 -->
-                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/roles" >返回首页</a>
+                                        <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/user/page?page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/user/page?page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
@@ -173,16 +179,28 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                                 <h4 class="modal-title" id="myModalLabel">
-                                    修改角色信息
+                                    修改用户信息(用户名不允许修改!)
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/roles/update" method="post" >
+                                <form role="form" action="/management/user/update" method="post" >
                                     <div class="form-group">
                                         <label for="update_id">ID</label><input type="text" class="form-control" name="update_id" readonly="readonly" id="update_id" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="update_role_name">角色名</label><input type="text" class="form-control" name="update_role_name" id="update_role_name" />
+                                        <label for="update_nickname">昵称</label><input type="text" class="form-control" name="update_nickname" id="update_nickname" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_email">邮箱</label><input type="email" class="form-control" name="update_email" id="update_email" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_birthday">生日</label><input type="date" class="form-control" name="update_birthday" id="update_birthday" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_age">年龄</label><input type="text" class="form-control" name="update_age" id="update_age" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="update_phone">手机号</label><input type="text" class="form-control" name="update_phone" id="update_phone" />
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">提交</button>
                                 </form>
@@ -197,13 +215,26 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                                 <h4 class="modal-title" id="myModalLabel">
-                                    添加角色
+                                    添加用户
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/roles/add" method="post" enctype = "multipart/form-data">
+                                <form role="form" action="/management/user/add" method="post" enctype = "multipart/form-data">
                                     <div class="form-group">
-                                        <label for="role_name">角色名</label><input type="text" class="form-control" name="role_name" />
+                                        <label for="phone">手机号</label><input type="text" class="form-control" name="phone" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username">用户名</label><input type="text" class="form-control" name="username" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">密码</label><input type="password" class="form-control" name="password" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="group_id">用户组</label>
+                                        <select name="group_id" class="form-control">
+                                            <option value="1">管理员</option>
+                                            <option value="2">顾客</option>
+                                        </select>
                                     </div>
                                     <button type="submit" class="btn btn-default btn-primary">提交</button>
                                 </form>
@@ -222,9 +253,9 @@
                                 </h4>
                             </div>
                             <div class="modal-body">
-                                <form role="form" action="/management/roles/import" method="post" enctype = "multipart/form-data">
+                                <form role="form" action="/managementUser/import" method="post" enctype = "multipart/form-data">
                                     <div style="margin-top: 15px;" class="form-group">
-                                            <label for="roles_excel_file">请上传EXCEL文件</label><input role="button"  type="file" name="roles_excel_file" />
+                                            <label for="user_file">请上传EXCEL文件</label><input role="button"  type="file" name="user_file" />
                                         <p style="margin-top: 10px;" class="help-block">
                                             模板下载链接如下:
                                             <a href="/managementUser/download">点击下载</a>

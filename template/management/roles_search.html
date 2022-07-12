@@ -1,4 +1,4 @@
-{{ define "management/roles.html" }}
+{{ define "management/roles_search.html" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -155,11 +155,11 @@
                                         <a style="float:right; font-size: small;margin-top: 10px;" role="button" class="btn btn-default" href="/management/roles" >返回首页</a>
                                         {{ $page := add .currentPage -1 }}
                                         {{if lt $page 1}}
-                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page=1" >上一页</a>
+                                            <a style="font-size: small;margin-top: 10px;margin-right: 10px;" role="button" class="btn btn-info" href="/management/roles/search/page?kw={{ .kw }}&page=1" >上一页</a>
                                         {{ else }}
-                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage -1 }}" >上一页</a>
+                                            <a style="font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/search/page?kw={{ .kw }}&page={{add .currentPage -1 }}" >上一页</a>
                                         {{end}}
-                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/page?page={{add .currentPage 1 }}" >下一页</a>
+                                        <a style="float: right; font-size: small;margin-right: 10px;margin-top: 10px;" role="button" class="btn btn-info" href="/management/roles/search/page?kw={{ .kw }}&page={{add .currentPage 1 }}" >下一页</a>
                                     </ul>
                                 </div>
                             </div>
